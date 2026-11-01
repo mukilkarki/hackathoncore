@@ -1,0 +1,4 @@
+window.NEXUS_SUPABASE_CONFIG = {
+  url: "https://pmspypaltzkokcjrwxbi.supabase.co",
+  anonKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBtc3B5cGFsdHprb2tjanJ3eGJpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM1MDU3MzQsImV4cCI6MjEwOTA4MTczNH0.Gh1QOMG4VA-H6umb-mX343mV2khgOFuOLE3H-7f7rhg"
+};
