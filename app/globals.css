@@ -1,0 +1,9 @@
+@tailwind base;@tailwind components;@tailwind utilities;
+body{background:radial-gradient(60rem 30rem at 70% -10%,#4c1d95 0,transparent 60%),#070b1a;color:#e5e9f7;min-height:100vh}
+.glass{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(12px);border-radius:1rem}
+.btn{background:linear-gradient(90deg,#7c3aed,#3b82f6);border-radius:.6rem;padding:.6rem 1.2rem;font-weight:600;display:inline-block}
+.inp{width:100%;background:#0c1228;border:1px solid #2a3358;border-radius:.5rem;padding:.55rem .75rem}
+.inp:focus-visible,.btn:focus-visible,a:focus-visible{outline:2px solid #818cf8;outline-offset:2px}
+@keyframes drift{to{transform:translate(40px,-30px) scale(1.15)}}
+.orb{animation:drift 9s ease-in-out infinite alternate}
+@media(prefers-reduced-motion:reduce){.orb{animation:none}}
