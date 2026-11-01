@@ -1,0 +1,1886 @@
+<!DOCTYPE html>
+<html lang="ta" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NexusZero - Hackathon Team Portfolio & Ops Hub</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            brand: {
+              50: '#f5f3ff',
+              100: '#ede9fe',
+              500: '#8b5cf6',
+              600: '#7c3aed',
+              700: '#6d28d9',
+              800: '#5b21b6',
+              900: '#4c1d95',
+              950: '#2e1065',
+            },
+            dark: {
+              surface: '#0f172a',
+              card: '#1e293b',
+              border: '#334155',
+              highlight: '#273449'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0f172a;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #6366f1;
+    }
+    .glow-border {
+      box-shadow: 0 0 15px -3px rgba(139, 92, 246, 0.25);
+    }
+  </style>
+</head>
+<body class="bg-[#0b0f19] text-slate-100 font-sans min-h-screen flex flex-col selection:bg-brand-600 selection:text-white">
+
+  <!-- ================= TOP NOTIFICATION / ANNOUNCEMENT TICKER ================= -->
+  <div id="announcement-banner" class="bg-gradient-to-r from-brand-900 via-indigo-900 to-slate-900 border-b border-brand-800/40 text-xs py-2 px-4 transition-all">
+    <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
+      <div class="flex items-center space-x-2 truncate">
+        <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-amber-400/20 text-amber-300 border border-amber-400/30 uppercase tracking-wider animate-pulse">
+          <i class="fa-solid fa-bullhorn mr-1"></i> Live Update
+        </span>
+        <span id="ticker-text" class="text-slate-200 truncate font-medium">Loading announcements...</span>
+      </div>
+      <button onclick="dismissBanner()" class="text-slate-400 hover:text-white text-xs">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- ================= NAVBAR ================= -->
+  <header class="sticky top-0 z-40 bg-[#0f172a]/90 backdrop-blur-md border-b border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <!-- Logo -->
+        <div class="flex items-center space-x-3 cursor-pointer" onclick="switchView('home')">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-cyan-400 p-[2px] flex items-center justify-center shadow-lg shadow-brand-500/20">
+            <div class="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center">
+              <i class="fa-solid fa-bolt text-brand-400 text-lg"></i>
+            </div>
+          </div>
+          <div>
+            <span class="text-xl font-extrabold tracking-tight bg-gradient-to-r from-white via-slate-200 to-brand-300 bg-clip-text text-transparent">Nexus<span class="text-brand-400">Zero</span></span>
+            <span class="hidden sm:inline-block text-[10px] tracking-widest text-brand-300 bg-brand-950/80 px-2 py-0.5 rounded-full border border-brand-800/60 ml-2">6+2 SQUAD</span>
+          </div>
+        </div>
+
+        <!-- Desktop Navigation -->
+        <nav class="hidden md:flex items-center space-x-1 lg:space-x-2 text-sm font-medium text-slate-300">
+          <button onclick="switchView('home')" class="nav-link px-3 py-2 rounded-lg hover:text-white hover:bg-slate-800/80 transition" data-view="home">Portfolio</button>
+          <a href="#team-section" onclick="switchView('home')" class="nav-link px-3 py-2 rounded-lg hover:text-white hover:bg-slate-800/80 transition">Team (6+2)</a>
+          <a href="#projects-section" onclick="switchView('home')" class="nav-link px-3 py-2 rounded-lg hover:text-white hover:bg-slate-800/80 transition">Projects</a>
+          <a href="#join-section" onclick="switchView('home')" class="nav-link px-3 py-2 rounded-lg hover:text-white hover:bg-slate-800/80 transition text-brand-300 hover:text-brand-200"><i class="fa-solid fa-user-plus mr-1"></i> Join Squad</a>
+          
+          <!-- Protected Nav Items -->
+          <button id="nav-member-portal" onclick="switchView('member-portal')" class="hidden nav-link px-3 py-2 rounded-lg text-emerald-400 bg-emerald-950/40 border border-emerald-800/50 hover:bg-emerald-900/60 transition">
+            <i class="fa-solid fa-terminal mr-1.5"></i> Workspace
+          </button>
+          <button id="nav-admin-dashboard" onclick="switchView('admin-dashboard')" class="hidden nav-link px-3 py-2 rounded-lg text-amber-400 bg-amber-950/40 border border-amber-800/50 hover:bg-amber-900/60 transition">
+            <i class="fa-solid fa-shield-halved mr-1.5"></i> Admin Hub
+          </button>
+        </nav>
+
+        <!-- Auth Button / User Profile -->
+        <div class="flex items-center space-x-3">
+          <div id="auth-unlogged" class="flex items-center space-x-2">
+            <button onclick="openLoginModal()" class="px-4 py-2 text-sm font-semibold text-white bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-500 hover:to-indigo-500 rounded-lg shadow-md shadow-brand-700/20 transition-all flex items-center space-x-2">
+              <i class="fa-solid fa-arrow-right-to-bracket text-xs"></i>
+              <span>Login</span>
+            </button>
+          </div>
+
+          <div id="auth-logged" class="hidden flex items-center space-x-3">
+            <div class="flex items-center space-x-2 bg-slate-800/80 py-1.5 px-3 rounded-full border border-slate-700">
+              <img id="user-avatar" src="https://placehold.co/100x100/4f46e5/ffffff?text=U" class="w-6 h-6 rounded-full object-cover" alt="User">
+              <div class="text-left text-xs leading-none">
+                <p id="user-display-name" class="font-semibold text-slate-200">Kaviyan</p>
+                <span id="user-role-badge" class="text-[10px] text-brand-400 font-mono capitalize">Lead</span>
+              </div>
+            </div>
+            <button onclick="logoutUser()" title="Logout" class="p-2 text-slate-400 hover:text-red-400 hover:bg-slate-800 rounded-lg transition">
+              <i class="fa-solid fa-arrow-right-from-bracket"></i>
+            </button>
+          </div>
+
+          <!-- Mobile Hamburger -->
+          <button onclick="toggleMobileNav()" class="md:hidden text-slate-400 hover:text-white p-2">
+            <i class="fa-solid fa-bars text-xl"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile Navigation Dropdown -->
+    <div id="mobile-menu" class="hidden md:hidden bg-slate-900/95 border-b border-slate-800 px-4 pt-2 pb-4 space-y-2 text-sm">
+      <button onclick="switchView('home'); toggleMobileNav();" class="block w-full text-left py-2 px-3 rounded hover:bg-slate-800">Portfolio</button>
+      <a href="#team-section" onclick="switchView('home'); toggleMobileNav();" class="block py-2 px-3 rounded hover:bg-slate-800">Team (6+2)</a>
+      <a href="#projects-section" onclick="switchView('home'); toggleMobileNav();" class="block py-2 px-3 rounded hover:bg-slate-800">Projects</a>
+      <a href="#join-section" onclick="switchView('home'); toggleMobileNav();" class="block py-2 px-3 rounded text-brand-300">Join Squad</a>
+      <div id="mobile-portal-links" class="border-t border-slate-800 pt-2 space-y-2"></div>
+    </div>
+  </header>
+
+  <!-- ================= MAIN CONTAINER ================= -->
+  <main class="flex-grow">
+
+    <!-- ===============================================================
+         VIEW 1: PUBLIC PORTFOLIO HOME
+         =============================================================== -->
+    <div id="view-home" class="view-content space-y-20 pb-20">
+      
+      <!-- HERO SECTION -->
+      <section class="relative overflow-hidden pt-12 pb-20 md:pt-20 md:pb-32">
+        <div class="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.25),rgba(255,255,255,0))]"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+          
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-brand-500/30 bg-brand-950/60 text-brand-300 text-xs font-medium mb-6">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+            Smart India Hackathon & Global Hackathon Squad
+          </div>
+
+          <h1 class="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-white max-w-4xl mx-auto leading-tight">
+            Architecting <span class="bg-gradient-to-r from-brand-400 via-indigo-400 to-cyan-400 bg-clip-text text-transparent">Award-Winning</span> Software in 36 Hours.
+          </h1>
+          
+          <p class="mt-6 text-lg sm:text-xl text-slate-400 max-w-2xl mx-auto font-light leading-relaxed">
+            Multi-disciplinary college squad combining CSE, AI&DS, ECE, and Business Strategists. Built for resilient engineering, lightning-fast prototypes, and winning stage pitches.
+          </p>
+
+          <!-- Hackathon Target Countdown -->
+          <div class="mt-10 max-w-xl mx-auto bg-slate-900/80 border border-slate-800 rounded-2xl p-5 backdrop-blur-sm shadow-xl">
+            <div class="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-3 flex items-center justify-center gap-2">
+              <i class="fa-regular fa-clock text-brand-400"></i> Next Grand Hackathon In:
+            </div>
+            <div class="grid grid-cols-4 gap-2 sm:gap-4 text-center font-mono">
+              <div class="bg-slate-950/90 rounded-xl p-3 border border-slate-800/80">
+                <span id="timer-days" class="text-2xl sm:text-4xl font-bold text-white">00</span>
+                <span class="block text-[10px] text-slate-400 uppercase mt-1">Days</span>
+              </div>
+              <div class="bg-slate-950/90 rounded-xl p-3 border border-slate-800/80">
+                <span id="timer-hours" class="text-2xl sm:text-4xl font-bold text-brand-400">00</span>
+                <span class="block text-[10px] text-slate-400 uppercase mt-1">Hours</span>
+              </div>
+              <div class="bg-slate-950/90 rounded-xl p-3 border border-slate-800/80">
+                <span id="timer-minutes" class="text-2xl sm:text-4xl font-bold text-indigo-400">00</span>
+                <span class="block text-[10px] text-slate-400 uppercase mt-1">Mins</span>
+              </div>
+              <div class="bg-slate-950/90 rounded-xl p-3 border border-slate-800/80">
+                <span id="timer-seconds" class="text-2xl sm:text-4xl font-bold text-cyan-400">00</span>
+                <span class="block text-[10px] text-slate-400 uppercase mt-1">Secs</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- CTAs -->
+          <div class="mt-8 flex flex-wrap justify-center items-center gap-4">
+            <a href="#team-section" class="px-6 py-3 rounded-xl bg-white text-slate-950 font-semibold hover:bg-slate-200 transition shadow-lg flex items-center space-x-2">
+              <span>Meet the 6+2 Crew</span>
+              <i class="fa-solid fa-arrow-down text-xs"></i>
+            </a>
+            <a href="#join-section" class="px-6 py-3 rounded-xl bg-slate-800/80 hover:bg-slate-800 text-slate-200 border border-slate-700 font-semibold transition flex items-center space-x-2">
+              <i class="fa-solid fa-paper-plane text-xs text-brand-400"></i>
+              <span>Apply to Join</span>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- TEAM SHOWCASE (6 CORE + 2 BACKUP ROLES) -->
+      <section id="team-section" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-3xl mx-auto mb-14">
+          <h2 class="text-xs font-bold text-brand-400 tracking-widest uppercase">The Dream Roster</h2>
+          <p class="mt-2 text-3xl sm:text-4xl font-extrabold text-white">6 Primary Pillars + 2 Standby Specialists</p>
+          <p class="mt-3 text-slate-400 text-sm">
+            Designed to cover full-stack engineering, generative AI, hardware/IoT, and high-impact pitching with seamless backup redundancy.
+          </p>
+        </div>
+
+        <!-- 6 Core Members Grid -->
+        <div class="mb-12">
+          <div class="flex items-center space-x-2 mb-6">
+            <span class="w-3 h-3 rounded-full bg-brand-500"></span>
+            <h3 class="text-lg font-bold text-white tracking-wide uppercase">Core Sprint Lineup (6 Members)</h3>
+          </div>
+          <div id="core-members-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Dynamically Rendered -->
+          </div>
+        </div>
+
+        <!-- 2 Backup / Standby Members Grid -->
+        <div>
+          <div class="flex items-center space-x-2 mb-6">
+            <span class="w-3 h-3 rounded-full bg-amber-400"></span>
+            <h3 class="text-lg font-bold text-white tracking-wide uppercase">Standby Contingency Bench (2 Members)</h3>
+            <span class="text-xs text-slate-400 font-normal ml-2">(Swappable immediately if any primary member is unavailable)</span>
+          </div>
+          <div id="backup-members-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-4xl mx-auto">
+            <!-- Dynamically Rendered -->
+          </div>
+        </div>
+      </section>
+
+      <!-- PROJECTS SHOWCASE -->
+      <section id="projects-section" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10">
+        <div class="flex flex-col md:flex-row md:items-end justify-between mb-12">
+          <div>
+            <h2 class="text-xs font-bold text-cyan-400 tracking-widest uppercase">Hackathon Portfolio</h2>
+            <p class="mt-2 text-3xl font-extrabold text-white">Built Under 36-Hour Sprints</p>
+          </div>
+          <p class="mt-2 md:mt-0 text-slate-400 text-sm max-w-md">
+            Production-grade POCs solving real institutional & industrial bottlenecks.
+          </p>
+        </div>
+
+        <div id="projects-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <!-- Dynamically Loaded Projects -->
+        </div>
+      </section>
+
+      <!-- RECRUITMENT APPLICATION FORM ("JOIN US") -->
+      <section id="join-section" class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-12">
+        <div class="bg-gradient-to-b from-slate-900 to-slate-950 border border-slate-800 rounded-3xl p-6 sm:p-10 shadow-2xl relative overflow-hidden">
+          <div class="absolute -right-20 -top-20 w-64 h-64 bg-brand-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+          <div class="text-center max-w-2xl mx-auto mb-8">
+            <span class="px-3 py-1 rounded-full text-xs font-semibold bg-brand-950 text-brand-300 border border-brand-800">Recruitment Open</span>
+            <h2 class="mt-3 text-2xl sm:text-3xl font-bold text-white">Join the NexusZero Hackathon Squad</h2>
+            <p class="mt-2 text-slate-400 text-sm">
+              We look for passion, 36-hour grit, and hands-on skill. Applications are reviewed directly by the Team Lead. Once approved, your account will be activated with portal access.
+            </p>
+          </div>
+
+          <form id="join-form" onsubmit="handleJoinSubmit(event)" class="space-y-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-medium text-slate-300 mb-1">Full Name *</label>
+                <input type="text" id="join-name" required placeholder="e.g. Arun Kumar" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500">
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-slate-300 mb-1">College Email / Personal Email *</label>
+                <input type="email" id="join-email" required placeholder="arun@college.edu" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500">
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div>
+                <label class="block text-xs font-medium text-slate-300 mb-1">Department *</label>
+                <input type="text" id="join-dept" required placeholder="e.g. AI & DS / CSE / ECE" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500">
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-slate-300 mb-1">Year of Study *</label>
+                <select id="join-year" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500">
+                  <option value="1st Year">1st Year</option>
+                  <option value="2nd Year" selected>2nd Year</option>
+                  <option value="3rd Year">3rd Year</option>
+                  <option value="Final Year">Final Year</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-slate-300 mb-1">Target Role *</label>
+                <select id="join-role" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500">
+                  <option value="Frontend & UI/UX">Frontend & UI/UX</option>
+                  <option value="Backend & Database">Backend & Database</option>
+                  <option value="AI / ML Specialist">AI / ML Specialist</option>
+                  <option value="Hardware / IoT Specialist">Hardware / IoT Specialist</option>
+                  <option value="QA / Pitch Presenter">QA / Pitch Presenter</option>
+                  <option value="Standby Fullstack Generalist">Standby Fullstack Generalist</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-medium text-slate-300 mb-1">Tech Stack & Tools (comma separated) *</label>
+                <input type="text" id="join-skills" required placeholder="Python, FastAPI, Docker, PyTorch" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500">
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-slate-300 mb-1">GitHub / Portfolio URL *</label>
+                <input type="url" id="join-portfolio" required placeholder="https://github.com/username" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500">
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-medium text-slate-300 mb-1">Hackathon Experience & Why do you want to join? *</label>
+              <textarea id="join-reason" rows="3" required placeholder="Describe any past hackathons, projects built, or your superpower during 36-hr sleepless sprints..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500"></textarea>
+            </div>
+
+            <div class="flex items-center justify-between pt-2">
+              <span class="text-xs text-slate-500"><i class="fa-solid fa-lock mr-1"></i> Data sent directly to Team Admin review table.</span>
+              <button type="submit" class="px-6 py-3 bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-500 hover:to-indigo-500 text-white font-semibold rounded-xl text-sm shadow-lg shadow-brand-700/20 transition">
+                Submit Application
+              </button>
+            </div>
+          </form>
+
+          <div id="join-success-msg" class="hidden mt-6 p-4 rounded-xl bg-emerald-950/80 border border-emerald-700 text-emerald-200 text-sm text-center">
+            <i class="fa-solid fa-circle-check text-lg mb-1 block text-emerald-400"></i>
+            Application submitted successfully! Your credentials will be enabled as soon as the Admin approves your profile.
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- ===============================================================
+         VIEW 2: MEMBER EXCLUSIVE PORTAL
+         =============================================================== -->
+    <div id="view-member-portal" class="view-content hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+      
+      <!-- Portal Top Header -->
+      <div class="bg-gradient-to-r from-slate-900 via-brand-950/50 to-slate-900 border border-slate-800 rounded-2xl p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+          <div class="flex items-center space-x-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
+            <span class="text-xs uppercase font-mono tracking-widest text-emerald-400">Member Space Active</span>
+          </div>
+          <h2 class="text-2xl font-bold text-white mt-1">Hackathon War Room & Sprint Terminal</h2>
+          <p class="text-slate-400 text-xs mt-0.5">Real-time team chat, rapid sprint Kanban, and shared cloud credentials.</p>
+        </div>
+
+        <div class="flex items-center space-x-2">
+          <span class="text-xs text-slate-400">Logged in as:</span>
+          <span id="portal-user-name" class="text-xs font-semibold text-white bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-700">Member</span>
+        </div>
+      </div>
+
+      <!-- Grid: Chat + Kanban -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        <!-- SPRINT KANBAN BOARD (7 cols) -->
+        <div class="lg:col-span-7 space-y-4">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+              <i class="fa-solid fa-list-check text-brand-400"></i>
+              <h3 class="font-bold text-white text-base">36-Hour Sprint Board</h3>
+            </div>
+            <button onclick="openAddTaskModal()" class="text-xs px-3 py-1.5 bg-brand-600 hover:bg-brand-500 text-white rounded-lg font-medium transition flex items-center space-x-1">
+              <i class="fa-solid fa-plus"></i>
+              <span>Add Task</span>
+            </button>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            
+            <!-- Column 1: To Do -->
+            <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-3 flex flex-col">
+              <div class="flex items-center justify-between pb-2 mb-3 border-b border-slate-800">
+                <span class="text-xs font-semibold text-amber-400 flex items-center gap-1.5">
+                  <span class="w-2 h-2 rounded-full bg-amber-400"></span> To-Do
+                </span>
+                <span id="todo-count" class="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded-full font-mono">0</span>
+              </div>
+              <div id="todo-tasks-container" class="space-y-2 flex-grow min-h-[220px]">
+                <!-- Kanban cards rendered here -->
+              </div>
+            </div>
+
+            <!-- Column 2: In-Progress -->
+            <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-3 flex flex-col">
+              <div class="flex items-center justify-between pb-2 mb-3 border-b border-slate-800">
+                <span class="text-xs font-semibold text-cyan-400 flex items-center gap-1.5">
+                  <span class="w-2 h-2 rounded-full bg-cyan-400"></span> Building
+                </span>
+                <span id="prog-count" class="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded-full font-mono">0</span>
+              </div>
+              <div id="prog-tasks-container" class="space-y-2 flex-grow min-h-[220px]">
+                <!-- Kanban cards rendered here -->
+              </div>
+            </div>
+
+            <!-- Column 3: Done -->
+            <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-3 flex flex-col">
+              <div class="flex items-center justify-between pb-2 mb-3 border-b border-slate-800">
+                <span class="text-xs font-semibold text-emerald-400 flex items-center gap-1.5">
+                  <span class="w-2 h-2 rounded-full bg-emerald-400"></span> Completed
+                </span>
+                <span id="done-count" class="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded-full font-mono">0</span>
+              </div>
+              <div id="done-tasks-container" class="space-y-2 flex-grow min-h-[220px]">
+                <!-- Kanban cards rendered here -->
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Quick Resources Locker -->
+          <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-4 mt-6">
+            <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-folder-open text-indigo-400"></i> Team Resource Locker
+            </h4>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+              <a href="https://github.com" target="_blank" class="p-2.5 rounded-lg bg-slate-950 border border-slate-800 hover:border-slate-700 flex items-center justify-between text-slate-300 hover:text-white transition">
+                <span class="truncate"><i class="fa-brands fa-github mr-2"></i>GitHub Repo</span>
+                <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-slate-500"></i>
+              </a>
+              <a href="https://figma.com" target="_blank" class="p-2.5 rounded-lg bg-slate-950 border border-slate-800 hover:border-slate-700 flex items-center justify-between text-slate-300 hover:text-white transition">
+                <span class="truncate"><i class="fa-brands fa-figma mr-2 text-pink-400"></i>UI Mockups</span>
+                <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-slate-500"></i>
+              </a>
+              <a href="https://drive.google.com" target="_blank" class="p-2.5 rounded-lg bg-slate-950 border border-slate-800 hover:border-slate-700 flex items-center justify-between text-slate-300 hover:text-white transition">
+                <span class="truncate"><i class="fa-solid fa-file-powerpoint mr-2 text-amber-400"></i>Pitch Deck</span>
+                <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-slate-500"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- TEAM GROUP CHATBOX (5 cols) -->
+        <div class="lg:col-span-5 bg-slate-900 border border-slate-800 rounded-2xl flex flex-col h-[560px] shadow-xl overflow-hidden">
+          <!-- Chat Header -->
+          <div class="p-4 border-b border-slate-800 bg-slate-950/60 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+              <div class="w-8 h-8 rounded-full bg-brand-600/30 border border-brand-500/40 flex items-center justify-center text-brand-400 text-xs font-bold">
+                <i class="fa-solid fa-comments"></i>
+              </div>
+              <div>
+                <h4 class="text-sm font-bold text-white">War Room Group Chat</h4>
+                <p class="text-[11px] text-slate-400">Encrypted internal team channel</p>
+              </div>
+            </div>
+            <span class="text-[10px] font-mono text-emerald-400 bg-emerald-950/80 px-2 py-0.5 rounded border border-emerald-800">8 Members Online</span>
+          </div>
+
+          <!-- Chat Message Feed -->
+          <div id="chat-messages" class="flex-grow p-4 space-y-3 overflow-y-auto">
+            <!-- Messages inserted by JS -->
+          </div>
+
+          <!-- Chat Input Bar -->
+          <form onsubmit="handleSendChat(event)" class="p-3 border-t border-slate-800 bg-slate-950/80 flex items-center gap-2">
+            <input type="text" id="chat-input" placeholder="Type a message to squad..." class="flex-grow bg-slate-900 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500">
+            <button type="submit" class="p-2.5 bg-brand-600 hover:bg-brand-500 text-white rounded-xl transition flex items-center justify-center">
+              <i class="fa-solid fa-paper-plane text-xs"></i>
+            </button>
+          </form>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ===============================================================
+         VIEW 3: ADMIN MANAGEMENT DASHBOARD
+         =============================================================== -->
+    <div id="view-admin-dashboard" class="view-content hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+      
+      <!-- Admin Top Metrics Banner -->
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <span class="text-xs font-mono uppercase tracking-widest text-amber-400 bg-amber-950/60 px-2.5 py-1 rounded border border-amber-800">
+            <i class="fa-solid fa-user-gear mr-1"></i> Lead Administrator Control
+          </span>
+          <h2 class="text-2xl font-bold text-white mt-2">Squad Operations & CMS Hub</h2>
+        </div>
+        <div class="flex items-center space-x-2">
+          <button onclick="openNewProjectModal()" class="text-xs px-3 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-medium rounded-lg transition flex items-center gap-1.5">
+            <i class="fa-solid fa-folder-plus"></i> New Project
+          </button>
+          <button onclick="openAnnouncementModal()" class="text-xs px-3 py-2 bg-brand-600 hover:bg-brand-500 text-white font-medium rounded-lg transition flex items-center gap-1.5">
+            <i class="fa-solid fa-bullhorn"></i> Post Ticker
+          </button>
+        </div>
+      </div>
+
+      <!-- Stat Badges -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-4">
+          <p class="text-xs text-slate-400 font-medium">Core Squad</p>
+          <p id="stat-core-count" class="text-2xl font-bold text-white mt-1">6 / 6</p>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-4">
+          <p class="text-xs text-slate-400 font-medium">Backup Bench</p>
+          <p id="stat-backup-count" class="text-2xl font-bold text-amber-400 mt-1">2 / 2</p>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-4">
+          <p class="text-xs text-slate-400 font-medium">Active Projects</p>
+          <p id="stat-project-count" class="text-2xl font-bold text-indigo-400 mt-1">3</p>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-4">
+          <p class="text-xs text-slate-400 font-medium">Pending Join Forms</p>
+          <p id="stat-pending-count" class="text-2xl font-bold text-cyan-400 mt-1">1</p>
+        </div>
+      </div>
+
+      <!-- Section: Join Applications Queue -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-lg">
+        <div class="p-4 sm:p-5 border-b border-slate-800 flex items-center justify-between bg-slate-950/60">
+          <div>
+            <h3 class="font-bold text-white text-base">Candidate Recruitment Pipeline</h3>
+            <p class="text-xs text-slate-400">Accepting an application automatically generates their member credentials.</p>
+          </div>
+          <span id="pending-badge-count" class="text-xs bg-brand-950 text-brand-300 border border-brand-800 px-3 py-1 rounded-full">1 Waiting</span>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-slate-950 text-slate-400 uppercase tracking-wider text-[10px]">
+              <tr>
+                <th class="py-3 px-4">Candidate</th>
+                <th class="py-3 px-4">Dept / Year</th>
+                <th class="py-3 px-4">Desired Role & Skills</th>
+                <th class="py-3 px-4">Pitch / Experience</th>
+                <th class="py-3 px-4">Links</th>
+                <th class="py-3 px-4 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="applications-table-body" class="divide-y divide-slate-800 text-slate-300">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Section: Active Members Management -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-lg">
+        <div class="p-4 sm:p-5 border-b border-slate-800 flex items-center justify-between bg-slate-950/60">
+          <div>
+            <h3 class="font-bold text-white text-base">Active Roster & Role Switching</h3>
+            <p class="text-xs text-slate-400">Swap any Core member with a Backup member dynamically in real time.</p>
+          </div>
+          <button onclick="openAddMemberModal()" class="text-xs px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-white rounded-lg border border-slate-700 transition">
+            <i class="fa-solid fa-user-plus mr-1"></i> Add Custom Member
+          </button>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-slate-950 text-slate-400 uppercase tracking-wider text-[10px]">
+              <tr>
+                <th class="py-3 px-4">Member</th>
+                <th class="py-3 px-4">Department</th>
+                <th class="py-3 px-4">Assigned Role</th>
+                <th class="py-3 px-4">Status</th>
+                <th class="py-3 px-4 text-right">Toggle Tier / Remove</th>
+              </tr>
+            </thead>
+            <tbody id="admin-roster-body" class="divide-y divide-slate-800 text-slate-300">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Section: Manage Projects & Announcements Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        
+        <!-- CMS: Announcements Management -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="font-bold text-white text-base">Live Announcement Posts</h3>
+            <button onclick="openAnnouncementModal()" class="text-xs text-brand-400 hover:text-brand-300">
+              <i class="fa-solid fa-plus mr-1"></i> New
+            </button>
+          </div>
+          <div id="admin-announcements-list" class="space-y-3">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+
+        <!-- CMS: Projects Management -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="font-bold text-white text-base">Projects Catalog CMS</h3>
+            <button onclick="openNewProjectModal()" class="text-xs text-indigo-400 hover:text-indigo-300">
+              <i class="fa-solid fa-plus mr-1"></i> New
+            </button>
+          </div>
+          <div id="admin-projects-list" class="space-y-3">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- ================= FOOTER ================= -->
+  <footer class="bg-slate-950 border-t border-slate-800 py-8 text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center gap-4">
+      <div class="flex items-center space-x-2">
+        <i class="fa-solid fa-shield-halved text-brand-500"></i>
+        <span>NexusZero Team Hub &copy; 2026. Built for 36-hr Rapid Excellence.</span>
+      </div>
+      <div class="flex items-center space-x-4">
+        <span>Admin Login: <code class="text-slate-400 font-mono">admin@nexus.io / admin123</code></span>
+        <span>Member: <code class="text-slate-400 font-mono">kaviyan@nexus.io / hack123</code></span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ===============================================================
+       MODALS SYSTEM
+       =============================================================== -->
+
+  <!-- 1. LOGIN / AUTH MODAL -->
+  <div id="modal-login" class="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl relative">
+      <button onclick="closeLoginModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+
+      <div class="text-center mb-6">
+        <div class="w-12 h-12 rounded-xl bg-brand-600/20 text-brand-400 flex items-center justify-center mx-auto mb-3 text-xl">
+          <i class="fa-solid fa-user-lock"></i>
+        </div>
+        <h3 class="text-xl font-bold text-white">Squad Authentication</h3>
+        <p class="text-xs text-slate-400 mt-1">Access the Workspace terminal or Admin control center</p>
+      </div>
+
+      <!-- Quick Fill Role Buttons -->
+      <div class="grid grid-cols-2 gap-2 mb-4">
+        <button type="button" onclick="quickFillAuth('admin')" class="py-1.5 px-2 rounded-lg bg-amber-950/40 border border-amber-800/60 text-amber-300 hover:bg-amber-900/50 text-xs font-mono transition">
+          Quick: Admin
+        </button>
+        <button type="button" onclick="quickFillAuth('member')" class="py-1.5 px-2 rounded-lg bg-brand-950/40 border border-brand-800/60 text-brand-300 hover:bg-brand-900/50 text-xs font-mono transition">
+          Quick: Member
+        </button>
+      </div>
+
+      <form id="login-form" onsubmit="handleLoginSubmit(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-medium text-slate-300 mb-1">Email / Username</label>
+          <input type="email" id="auth-email" required placeholder="admin@nexus.io" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500">
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-slate-300 mb-1">Password</label>
+          <input type="password" id="auth-password" required placeholder="••••••••" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500">
+        </div>
+
+        <div id="login-error-msg" class="hidden text-xs text-red-400 bg-red-950/50 border border-red-800/60 p-2.5 rounded-lg"></div>
+
+        <button type="submit" class="w-full py-2.5 bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-500 hover:to-indigo-500 text-white font-semibold rounded-xl text-sm transition shadow-lg">
+          Authenticate & Enter
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 2. ADD / EDIT PROJECT MODAL -->
+  <div id="modal-project" class="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl relative">
+      <button onclick="closeProjectModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+
+      <h3 id="project-modal-title" class="text-lg font-bold text-white mb-4">Add Hackathon Project</h3>
+      
+      <form id="project-form" onsubmit="handleSaveProject(event)" class="space-y-4">
+        <input type="hidden" id="proj-edit-id">
+
+        <div>
+          <label class="block text-xs font-medium text-slate-300 mb-1">Project Title</label>
+          <input type="text" id="proj-title" required placeholder="e.g. MedVigil AI" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:border-brand-500">
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-slate-300 mb-1">Description / Problem Statement</label>
+          <textarea id="proj-desc" rows="3" required placeholder="Edge AI patient monitor system for rural clinics..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:border-brand-500"></textarea>
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-slate-300 mb-1">Tech Stack (comma separated)</label>
+          <input type="text" id="proj-tags" required placeholder="FastAPI, React, OpenCV, ESP32" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:border-brand-500">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-medium text-slate-300 mb-1">GitHub Repo URL</label>
+            <input type="url" id="proj-github" required placeholder="https://github.com/..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:border-brand-500">
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-300 mb-1">Live Demo / Pitch URL</label>
+            <input type="url" id="proj-demo" required placeholder="https://demo.nexus.io" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:border-brand-500">
+          </div>
+        </div>
+
+        <div class="flex justify-end space-x-2 pt-2">
+          <button type="button" onclick="closeProjectModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs">Cancel</button>
+          <button type="submit" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold">Save Project</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 3. ADD / EDIT ANNOUNCEMENT MODAL -->
+  <div id="modal-announcement" class="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl relative">
+      <button onclick="closeAnnouncementModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+
+      <h3 class="text-lg font-bold text-white mb-4">Post Live Banner Announcement</h3>
+      
+      <form id="announcement-form" onsubmit="handleSaveAnnouncement(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-medium text-slate-300 mb-1">Announcement Message</label>
+          <textarea id="anno-content" rows="3" required placeholder="Shortlisted for SIH 2026 Grand Finale at IIT Madras!" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:border-brand-500"></textarea>
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-slate-300 mb-1">Target Action URL (Optional)</label>
+          <input type="url" id="anno-link" placeholder="https://hackathon.gov.in" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:border-brand-500">
+        </div>
+
+        <div class="flex justify-end space-x-2 pt-2">
+          <button type="button" onclick="closeAnnouncementModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs">Cancel</button>
+          <button type="submit" class="px-5 py-2 bg-brand-600 hover:bg-brand-500 text-white rounded-xl text-xs font-semibold">Post to Banner</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 4. ADD SPRINT TASK MODAL -->
+  <div id="modal-task" class="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl relative">
+      <button onclick="closeTaskModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+
+      <h3 class="text-lg font-bold text-white mb-4">Create Hackathon Sprint Task</h3>
+      
+      <form id="task-form" onsubmit="handleSaveTask(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-medium text-slate-300 mb-1">Task Title</label>
+          <input type="text" id="task-title" required placeholder="e.g. Integrate Razorpay Test Webhook" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:border-brand-500">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-medium text-slate-300 mb-1">Assignee</label>
+            <select id="task-assignee" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
+              <!-- Dynamically populated with team members -->
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-300 mb-1">Priority</label>
+            <select id="task-priority" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
+              <option value="High">High (Urgent)</option>
+              <option value="Medium" selected>Medium</option>
+              <option value="Low">Low</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="flex justify-end space-x-2 pt-2">
+          <button type="button" onclick="closeTaskModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs">Cancel</button>
+          <button type="submit" class="px-5 py-2 bg-brand-600 hover:bg-brand-500 text-white rounded-xl text-xs font-semibold">Add to Board</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 5. ADD CUSTOM MEMBER MODAL -->
+  <div id="modal-member" class="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl relative">
+      <button onclick="closeMemberModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+
+      <h3 class="text-lg font-bold text-white mb-4">Add Roster Member</h3>
+      
+      <form id="member-form" onsubmit="handleSaveCustomMember(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-medium text-slate-300 mb-1">Name</label>
+          <input type="text" id="new-mem-name" required placeholder="Full Name" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:border-brand-500">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-medium text-slate-300 mb-1">Department</label>
+            <input type="text" id="new-mem-dept" required placeholder="e.g. CSE / IT" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:border-brand-500">
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-300 mb-1">Tier</label>
+            <select id="new-mem-tier" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
+              <option value="core">Core (6 Member Lineup)</option>
+              <option value="backup">Backup (Contingency)</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-slate-300 mb-1">Assigned Role</label>
+          <input type="text" id="new-mem-role" required placeholder="e.g. ML & Prompt Engineer" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:border-brand-500">
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-slate-300 mb-1">Skills (comma separated)</label>
+          <input type="text" id="new-mem-skills" required placeholder="Python, TensorFlow, HuggingFace" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:border-brand-500">
+        </div>
+
+        <div class="flex justify-end space-x-2 pt-2">
+          <button type="button" onclick="closeMemberModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs">Cancel</button>
+          <button type="submit" class="px-5 py-2 bg-brand-600 hover:bg-brand-500 text-white rounded-xl text-xs font-semibold">Save Member</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= NOTIFICATION TOAST ================= -->
+  <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-24 opacity-0 transition-all duration-300 bg-slate-800 border border-slate-700 text-white px-4 py-3 rounded-xl shadow-2xl flex items-center space-x-3 text-sm">
+    <i id="toast-icon" class="fa-solid fa-circle-check text-emerald-400"></i>
+    <span id="toast-msg">Notification text</span>
+  </div>
+
+  <!-- ================= JAVASCRIPT APPLICATION CORE ================= -->
+  <script>
+    /**
+     * SQUAD CONFIGURATION & INITIAL STATE
+     * Features full local persistence with fallback initial mock data
+     */
+    const INITIAL_MEMBERS = [
+      // 6 Core Squad Members
+      {
+        id: "mem-1",
+        name: "Kaviyan S",
+        dept: "Computer Science (CSE)",
+        role: "Team Lead & System Architect",
+        tier: "core", // "core" or "backup"
+        skills: ["System Architecture", "FastAPI", "Docker", "Pitch Lead"],
+        github: "https://github.com",
+        linkedin: "https://linkedin.com",
+        avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80"
+      },
+      {
+        id: "mem-2",
+        name: "Dharshini R",
+        dept: "Information Tech (IT)",
+        role: "Frontend & UI/UX Developer",
+        tier: "core",
+        skills: ["Next.js", "Tailwind CSS", "Figma", "Three.js"],
+        github: "https://github.com",
+        linkedin: "https://linkedin.com",
+        avatar: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=300&auto=format&fit=crop&q=80"
+      },
+      {
+        id: "mem-3",
+        name: "Ashwin Balaji",
+        dept: "CSE (Cybersecurity)",
+        role: "Backend & Database Engineer",
+        tier: "core",
+        skills: ["Node.js", "PostgreSQL", "Redis", "OAuth2 & JWT"],
+        github: "https://github.com",
+        linkedin: "https://linkedin.com",
+        avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&auto=format&fit=crop&q=80"
+      },
+      {
+        id: "mem-4",
+        name: "Sneha Murugan",
+        dept: "Artificial Intelligence (AI & DS)",
+        role: "AI & ML Specialist",
+        tier: "core",
+        skills: ["PyTorch", "LangChain", "OpenCV", "Fine-tuning LLMs"],
+        github: "https://github.com",
+        linkedin: "https://linkedin.com",
+        avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=300&auto=format&fit=crop&q=80"
+      },
+      {
+        id: "mem-5",
+        name: "Vigneshwaran K",
+        dept: "Electronics & Comm (ECE)",
+        role: "Hardware & IoT Specialist",
+        tier: "core",
+        skills: ["ESP32 / Arduino", "MQTT", "Circuit Design", "Embedded C"],
+        github: "https://github.com",
+        linkedin: "https://linkedin.com",
+        avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300&auto=format&fit=crop&q=80"
+      },
+      {
+        id: "mem-6",
+        name: "Harish V",
+        dept: "Management Studies / MBA",
+        role: "QA Engineer & Stage Pitcher",
+        tier: "core",
+        skills: ["Market Validation", "Financial Model", "Selenium QA", "Keynote Demo"],
+        github: "https://github.com",
+        linkedin: "https://linkedin.com",
+        avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300&auto=format&fit=crop&q=80"
+      },
+      // 2 Backup Standby Members
+      {
+        id: "mem-7",
+        name: "Manoj Kumar",
+        dept: "Computer Science (CSE)",
+        role: "Standby 1: Full-Stack Generalist",
+        tier: "backup",
+        skills: ["Express.js", "React Native", "Tailwind", "REST APIs"],
+        github: "https://github.com",
+        linkedin: "https://linkedin.com",
+        avatar: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=300&auto=format&fit=crop&q=80"
+      },
+      {
+        id: "mem-8",
+        name: "Pooja Venkatesh",
+        dept: "Media Tech & Visual Comm",
+        role: "Standby 2: Visual Content & UX",
+        tier: "backup",
+        skills: ["Figma Systems", "Motion Graphics", "Slide Pitch Deck", "Micro-copy"],
+        github: "https://github.com",
+        linkedin: "https://linkedin.com",
+        avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=300&auto=format&fit=crop&q=80"
+      }
+    ];
+
+    const INITIAL_PROJECTS = [
+      {
+        id: "proj-1",
+        title: "AgriVision AI - Plant Disease Drone Radar",
+        desc: "Autonomous edge drone imagery system analyzing crop fungal infections in under 4 seconds using YOLOv8 and offline ESP32 LoRa nodes.",
+        tags: ["PyTorch", "FastAPI", "React Native", "LoRa IoT"],
+        github: "https://github.com",
+        demo: "https://demo.nexus.io"
+      },
+      {
+        id: "proj-2",
+        title: "ResQGrid - Disaster Mesh Network",
+        desc: "Zero-telecom emergency mesh app allowing flood survivors to send geo-coordinates and health triage via peer-to-peer Wi-Fi Direct.",
+        tags: ["Go", "WebRTC", "Leaflet Maps", "IndexedDB"],
+        github: "https://github.com",
+        demo: "https://demo.nexus.io"
+      },
+      {
+        id: "proj-3",
+        title: "MedVigil - ICU Realtime Telemetry",
+        desc: "Hospital ICU monitor alerting nurse desks to critical arrhythmia patterns before conventional monitors using synthetic ECG transformers.",
+        tags: ["Next.js", "Tailwind", "Python", "MQTT"],
+        github: "https://github.com",
+        demo: "https://demo.nexus.io"
+      }
+    ];
+
+    const INITIAL_TASKS = [
+      { id: "task-1", title: "Train and quantize YOLOv8n to ONNX format", assignee: "Sneha Murugan", priority: "High", status: "todo" },
+      { id: "task-2", title: "Build responsive Pitch Presentation slides (10-slide deck)", assignee: "Harish V", priority: "Medium", status: "todo" },
+      { id: "task-3", title: "Configure JWT Auth with Redis Refresh Tokens", assignee: "Ashwin Balaji", priority: "High", status: "progress" },
+      { id: "task-4", title: "Design live radar UI components with Tailwind", assignee: "Dharshini R", priority: "Medium", status: "progress" },
+      { id: "task-5", title: "System Architecture & API specifications written", assignee: "Kaviyan S", priority: "High", status: "done" }
+    ];
+
+    const INITIAL_APPLICATIONS = [
+      {
+        id: "app-1",
+        name: "Sanjay Raman",
+        email: "sanjay.r@college.edu",
+        dept: "ECE",
+        year: "3rd Year",
+        targetRole: "Hardware / IoT Specialist",
+        skills: "Raspberry Pi, ESP32, CAN Bus, C++",
+        portfolio: "https://github.com/sanjay-iot",
+        reason: "Participated in Smart India Hackathon internal rounds. Built autonomous obstacle robot. Can work continuously 40 hours with hardware debugging tools.",
+        status: "pending"
+      }
+    ];
+
+    const INITIAL_CHATS = [
+      { id: "msg-1", author: "Kaviyan (Lead)", role: "lead", text: "Team, hackathon problem statement drops tonight at 8 PM. Ensure everyone's local dev docker containers are warm!", time: "10:14 AM" },
+      { id: "msg-2", author: "Dharshini (Frontend)", role: "member", text: "Figma design system and color palette ready for dark mode!", time: "10:18 AM" },
+      { id: "msg-3", author: "Ashwin (Backend)", role: "member", text: "Database schemas and boilerplate FastAPI server tested.", time: "10:22 AM" }
+    ];
+
+    // Local Storage State Loader
+    function loadStorage(key, fallback) {
+      try {
+        const item = localStorage.getItem('nexus_' + key);
+        return item ? JSON.parse(item) : fallback;
+      } catch (e) {
+        return fallback;
+      }
+    }
+
+    function saveStorage(key, data) {
+      try {
+        localStorage.setItem('nexus_' + key, JSON.stringify(data));
+      } catch (e) {
+        console.error("Storage error:", e);
+      }
+    }
+
+    // Reactive State
+    let members = loadStorage('members', INITIAL_MEMBERS);
+    let projects = loadStorage('projects', INITIAL_PROJECTS);
+    let tasks = loadStorage('tasks', INITIAL_TASKS);
+    let applications = loadStorage('applications', INITIAL_APPLICATIONS);
+    let chats = loadStorage('chats', INITIAL_CHATS);
+    let announcements = loadStorage('announcements', [
+      { id: "anno-1", text: "🎉 Shortlisted for National Hackathon Finals 2026! Pre-sprint setup in progress.", link: "" }
+    ]);
+
+    // Active Auth User State
+    let currentUser = loadStorage('session_user', null);
+
+    // ===============================================================
+    // ROUTING & VIEW CONTROLLER
+    // ===============================================================
+    function switchView(viewName) {
+      document.querySelectorAll('.view-content').forEach(el => el.classList.add('hidden'));
+      
+      const target = document.getElementById(`view-${viewName}`);
+      if (target) {
+        target.classList.remove('hidden');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      // Update Active Navigation Styles
+      document.querySelectorAll('.nav-link').forEach(link => {
+        if (link.getAttribute('data-view') === viewName) {
+          link.classList.add('text-brand-400', 'bg-slate-800');
+        } else {
+          link.classList.remove('text-brand-400', 'bg-slate-800');
+        }
+      });
+
+      // Guard check for tabs
+      if (viewName === 'member-portal' && !currentUser) {
+        showToast("Please log in to enter the team workspace", "warning");
+        openLoginModal();
+        switchView('home');
+        return;
+      }
+
+      if (viewName === 'admin-dashboard' && (!currentUser || currentUser.role !== 'admin')) {
+        showToast("Access restricted: Admin privileges required", "error");
+        switchView('home');
+        return;
+      }
+
+      renderAll();
+    }
+
+    function toggleMobileNav() {
+      const menu = document.getElementById('mobile-menu');
+      menu.classList.toggle('hidden');
+    }
+
+    function dismissBanner() {
+      document.getElementById('announcement-banner').style.display = 'none';
+    }
+
+    // ===============================================================
+    // RENDER FUNCTIONS
+    // ===============================================================
+    function renderAll() {
+      renderAnnouncements();
+      renderTeamMembers();
+      renderProjects();
+      renderAuthBar();
+      renderTasks();
+      renderChat();
+      renderAdminDashboard();
+    }
+
+    // 1. Announcements
+    function renderAnnouncements() {
+      const tickerText = document.getElementById('ticker-text');
+      if (announcements.length > 0) {
+        tickerText.textContent = announcements[0].text;
+      } else {
+        tickerText.textContent = "Welcome to NexusZero Hackathon Team Portal!";
+      }
+
+      const adminAnnoList = document.getElementById('admin-announcements-list');
+      if (adminAnnoList) {
+        adminAnnoList.innerHTML = announcements.map(a => `
+          <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 flex items-center justify-between text-xs">
+            <span class="text-slate-200 truncate pr-2">${escapeHtml(a.text)}</span>
+            <button onclick="deleteAnnouncement('${a.id}')" class="text-slate-400 hover:text-red-400 transition ml-2">
+              <i class="fa-solid fa-trash"></i>
+            </button>
+          </div>
+        `).join('') || '<p class="text-xs text-slate-500">No active announcements.</p>';
+      }
+    }
+
+    // 2. Team Members Showcase
+    function renderTeamMembers() {
+      const coreGrid = document.getElementById('core-members-grid');
+      const backupGrid = document.getElementById('backup-members-grid');
+
+      const coreMembers = members.filter(m => m.tier === 'core');
+      const backupMembers = members.filter(m => m.tier === 'backup');
+
+      // Render Core
+      coreGrid.innerHTML = coreMembers.map(m => createMemberCard(m, true)).join('');
+
+      // Render Backup
+      backupGrid.innerHTML = backupMembers.map(m => createMemberCard(m, false)).join('');
+
+      // Populate Member select in task creation modal
+      const taskAssigneeSelect = document.getElementById('task-assignee');
+      if (taskAssigneeSelect) {
+        taskAssigneeSelect.innerHTML = members.map(m => `<option value="${m.name}">${m.name} (${m.role})</option>`).join('');
+      }
+    }
+
+    function createMemberCard(member, isCore) {
+      const tierBadge = isCore 
+        ? `<span class="px-2.5 py-1 bg-brand-950/80 border border-brand-700/60 text-brand-300 rounded-full text-[10px] font-semibold tracking-wider uppercase">CORE MEMBER</span>`
+        : `<span class="px-2.5 py-1 bg-amber-950/80 border border-amber-700/60 text-amber-300 rounded-full text-[10px] font-semibold tracking-wider uppercase"><i class="fa-solid fa-arrows-rotate mr-1"></i>STANDBY BACKUP</span>`;
+
+      return `
+        <div class="bg-slate-900 border border-slate-800 hover:border-slate-700 rounded-2xl p-5 flex flex-col justify-between transition-all hover:-translate-y-1 hover:shadow-xl group">
+          <div>
+            <div class="flex items-start justify-between gap-3 mb-4">
+              <div class="flex items-center space-x-3">
+                <img src="${member.avatar || 'https://placehold.co/150x150/4f46e5/ffffff?text=' + member.name.charAt(0)}" 
+                     alt="${escapeHtml(member.name)}" 
+                     onerror="this.src='https://placehold.co/150x150/4f46e5/ffffff?text=${member.name.charAt(0)}'"
+                     class="w-14 h-14 rounded-2xl object-cover border-2 border-slate-800 group-hover:border-brand-500 transition">
+                <div>
+                  <h4 class="text-base font-bold text-white leading-tight">${escapeHtml(member.name)}</h4>
+                  <p class="text-xs text-brand-400 font-medium mt-0.5">${escapeHtml(member.role)}</p>
+                  <p class="text-[11px] text-slate-400">${escapeHtml(member.dept)}</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="mb-4">
+              ${tierBadge}
+            </div>
+
+            <div class="flex flex-wrap gap-1.5 mb-5">
+              ${(member.skills || []).map(skill => `
+                <span class="text-[10px] font-mono bg-slate-950 text-slate-300 px-2 py-0.5 rounded border border-slate-800">${escapeHtml(skill)}</span>
+              `).join('')}
+            </div>
+          </div>
+
+          <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400">
+            <span class="text-[11px] font-mono text-emerald-400"><i class="fa-solid fa-circle text-[8px] mr-1"></i>Active Sprint</span>
+            <div class="flex items-center space-x-3">
+              <a href="${member.github || '#'}" target="_blank" class="hover:text-white transition" title="GitHub"><i class="fa-brands fa-github text-sm"></i></a>
+              <a href="${member.linkedin || '#'}" target="_blank" class="hover:text-blue-400 transition" title="LinkedIn"><i class="fa-brands fa-linkedin text-sm"></i></a>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // 3. Projects Showcase
+    function renderProjects() {
+      const grid = document.getElementById('projects-grid');
+      grid.innerHTML = projects.map(proj => `
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 flex flex-col justify-between hover:border-slate-700 transition">
+          <div>
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600/20 to-cyan-500/20 border border-brand-500/30 flex items-center justify-center text-brand-400 mb-4">
+              <i class="fa-solid fa-cube text-lg"></i>
+            </div>
+            <h3 class="text-lg font-bold text-white mb-2">${escapeHtml(proj.title)}</h3>
+            <p class="text-xs text-slate-400 leading-relaxed mb-4">${escapeHtml(proj.desc)}</p>
+            <div class="flex flex-wrap gap-1.5 mb-6">
+              ${(proj.tags || []).map(t => `<span class="text-[10px] bg-slate-950 text-indigo-300 px-2.5 py-1 rounded-md border border-slate-800 font-mono">${escapeHtml(t)}</span>`).join('')}
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between pt-4 border-t border-slate-800 text-xs">
+            <a href="${proj.github}" target="_blank" class="text-slate-400 hover:text-white flex items-center gap-1.5 transition">
+              <i class="fa-brands fa-github"></i> <span>Repository</span>
+            </a>
+            <a href="${proj.demo}" target="_blank" class="text-brand-400 hover:text-brand-300 font-semibold flex items-center gap-1 transition">
+              <span>Live Prototype</span> <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+            </a>
+          </div>
+        </div>
+      `).join('');
+
+      // Admin Project List
+      const adminProjList = document.getElementById('admin-projects-list');
+      if (adminProjList) {
+        adminProjList.innerHTML = projects.map(p => `
+          <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 flex items-center justify-between text-xs">
+            <div>
+              <p class="font-bold text-white">${escapeHtml(p.title)}</p>
+              <p class="text-[11px] text-slate-400">${escapeHtml(p.tags.join(', '))}</p>
+            </div>
+            <div class="flex items-center space-x-2">
+              <button onclick="editProject('${p.id}')" class="text-indigo-400 hover:text-indigo-300"><i class="fa-solid fa-pen-to-square"></i></button>
+              <button onclick="deleteProject('${p.id}')" class="text-slate-400 hover:text-red-400"><i class="fa-solid fa-trash"></i></button>
+            </div>
+          </div>
+        `).join('') || '<p class="text-xs text-slate-500">No projects added yet.</p>';
+      }
+    }
+
+    // 4. Tasks Kanban Board
+    function renderTasks() {
+      const todoBox = document.getElementById('todo-tasks-container');
+      const progBox = document.getElementById('prog-tasks-container');
+      const doneBox = document.getElementById('done-tasks-container');
+
+      if (!todoBox || !progBox || !doneBox) return;
+
+      const todoList = tasks.filter(t => t.status === 'todo');
+      const progList = tasks.filter(t => t.status === 'progress');
+      const doneList = tasks.filter(t => t.status === 'done');
+
+      document.getElementById('todo-count').textContent = todoList.length;
+      document.getElementById('prog-count').textContent = progList.length;
+      document.getElementById('done-count').textContent = doneList.length;
+
+      todoBox.innerHTML = todoList.map(t => createTaskCard(t)).join('') || '<div class="h-full flex items-center justify-center text-[11px] text-slate-600">No tasks</div>';
+      progBox.innerHTML = progList.map(t => createTaskCard(t)).join('') || '<div class="h-full flex items-center justify-center text-[11px] text-slate-600">No tasks</div>';
+      doneBox.innerHTML = doneList.map(t => createTaskCard(t)).join('') || '<div class="h-full flex items-center justify-center text-[11px] text-slate-600">No tasks</div>';
+    }
+
+    function createTaskCard(t) {
+      const priorityColors = {
+        'High': 'text-red-400 bg-red-950/60 border-red-800/60',
+        'Medium': 'text-amber-400 bg-amber-950/60 border-amber-800/60',
+        'Low': 'text-slate-400 bg-slate-800 border-slate-700'
+      };
+
+      return `
+        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 hover:border-slate-700 transition flex flex-col justify-between space-y-2">
+          <p class="text-xs font-medium text-slate-200 leading-snug">${escapeHtml(t.title)}</p>
+          <div class="flex items-center justify-between text-[10px]">
+            <span class="text-slate-400 font-medium"><i class="fa-regular fa-user mr-1"></i>${escapeHtml(t.assignee)}</span>
+            <span class="px-1.5 py-0.5 rounded border font-mono ${priorityColors[t.priority] || ''}">${t.priority}</span>
+          </div>
+          <div class="flex items-center justify-end space-x-1 pt-1 border-t border-slate-900">
+            ${t.status !== 'todo' ? `<button onclick="moveTask('${t.id}', 'todo')" title="Move to To-Do" class="text-slate-500 hover:text-amber-400 px-1"><i class="fa-solid fa-angles-left"></i></button>` : ''}
+            ${t.status !== 'progress' ? `<button onclick="moveTask('${t.id}', 'progress')" title="Move to In-Progress" class="text-slate-500 hover:text-cyan-400 px-1"><i class="fa-solid fa-play"></i></button>` : ''}
+            ${t.status !== 'done' ? `<button onclick="moveTask('${t.id}', 'done')" title="Mark Done" class="text-slate-500 hover:text-emerald-400 px-1"><i class="fa-solid fa-check"></i></button>` : ''}
+            <button onclick="deleteTask('${t.id}')" title="Delete" class="text-slate-600 hover:text-red-400 px-1"><i class="fa-regular fa-trash-can"></i></button>
+          </div>
+        </div>
+      `;
+    }
+
+    // 5. Team Group Chatbox
+    function renderChat() {
+      const feed = document.getElementById('chat-messages');
+      if (!feed) return;
+
+      feed.innerHTML = chats.map(msg => {
+        const isMe = currentUser && (currentUser.name === msg.author || currentUser.email === msg.author);
+        return `
+          <div class="flex flex-col ${isMe ? 'items-end' : 'items-start'}">
+            <div class="flex items-center space-x-1.5 mb-1 text-[11px]">
+              <span class="font-bold ${isMe ? 'text-brand-300' : 'text-indigo-300'}">${escapeHtml(msg.author)}</span>
+              <span class="text-[9px] text-slate-500 font-mono">${escapeHtml(msg.time)}</span>
+            </div>
+            <div class="max-w-[85%] rounded-2xl px-3.5 py-2 text-xs leading-relaxed ${isMe ? 'bg-brand-600 text-white rounded-br-none' : 'bg-slate-800 text-slate-200 border border-slate-700 rounded-bl-none'}">
+              ${escapeHtml(msg.text)}
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      feed.scrollTop = feed.scrollHeight;
+    }
+
+    // 6. Admin Management Dashboard
+    function renderAdminDashboard() {
+      // Statistics Counts
+      const coreCount = members.filter(m => m.tier === 'core').length;
+      const backupCount = members.filter(m => m.tier === 'backup').length;
+      const pendingApps = applications.filter(a => a.status === 'pending');
+
+      const coreStat = document.getElementById('stat-core-count');
+      if (coreStat) coreStat.textContent = `${coreCount} / 6`;
+      const backupStat = document.getElementById('stat-backup-count');
+      if (backupStat) backupStat.textContent = `${backupCount} / 2`;
+      const projStat = document.getElementById('stat-project-count');
+      if (projStat) projStat.textContent = projects.length;
+      const pendStat = document.getElementById('stat-pending-count');
+      if (pendStat) pendStat.textContent = pendingApps.length;
+      const pendBadge = document.getElementById('pending-badge-count');
+      if (pendBadge) pendBadge.textContent = `${pendingApps.length} Waiting`;
+
+      // Applications Table
+      const appsBody = document.getElementById('applications-table-body');
+      if (appsBody) {
+        if (pendingApps.length === 0) {
+          appsBody.innerHTML = `<tr><td colspan="6" class="text-center py-6 text-slate-500 text-xs">No pending recruitment applications at this time.</td></tr>`;
+        } else {
+          appsBody.innerHTML = pendingApps.map(app => `
+            <tr class="hover:bg-slate-800/40 transition">
+              <td class="py-3 px-4">
+                <p class="font-bold text-white">${escapeHtml(app.name)}</p>
+                <p class="text-[11px] text-slate-400">${escapeHtml(app.email)}</p>
+              </td>
+              <td class="py-3 px-4 font-mono">${escapeHtml(app.dept)} <span class="text-slate-500">(${escapeHtml(app.year)})</span></td>
+              <td class="py-3 px-4">
+                <span class="text-brand-300 font-medium block">${escapeHtml(app.targetRole)}</span>
+                <span class="text-[10px] text-slate-400 font-mono">${escapeHtml(app.skills)}</span>
+              </td>
+              <td class="py-3 px-4 max-w-xs truncate text-[11px] text-slate-300" title="${escapeHtml(app.reason)}">
+                ${escapeHtml(app.reason)}
+              </td>
+              <td class="py-3 px-4">
+                <a href="${app.portfolio}" target="_blank" class="text-brand-400 hover:underline flex items-center gap-1 font-mono">
+                  Link <i class="fa-solid fa-arrow-up-right-from-square text-[9px]"></i>
+                </a>
+              </td>
+              <td class="py-3 px-4 text-right space-x-2">
+                <button onclick="approveApplication('${app.id}')" class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-white rounded font-medium transition" title="Accept & Add to Team">
+                  <i class="fa-solid fa-check mr-1"></i> Accept
+                </button>
+                <button onclick="rejectApplication('${app.id}')" class="px-2 py-1 bg-slate-800 hover:bg-red-900/60 text-slate-400 hover:text-red-300 rounded transition" title="Reject">
+                  <i class="fa-solid fa-xmark"></i>
+                </button>
+              </td>
+            </tr>
+          `).join('');
+        }
+      }
+
+      // Member Management Roster Table
+      const rosterBody = document.getElementById('admin-roster-body');
+      if (rosterBody) {
+        rosterBody.innerHTML = members.map(m => {
+          const isCore = m.tier === 'core';
+          return `
+            <tr class="hover:bg-slate-800/40 transition">
+              <td class="py-3 px-4 font-medium text-white flex items-center space-x-2">
+                <span class="w-2 h-2 rounded-full ${isCore ? 'bg-brand-500' : 'bg-amber-400'}"></span>
+                <span>${escapeHtml(m.name)}</span>
+              </td>
+              <td class="py-3 px-4 text-slate-400 font-mono">${escapeHtml(m.dept)}</td>
+              <td class="py-3 px-4 text-brand-300">${escapeHtml(m.role)}</td>
+              <td class="py-3 px-4">
+                <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase ${isCore ? 'bg-brand-950 text-brand-300 border border-brand-800' : 'bg-amber-950 text-amber-300 border border-amber-800'}">
+                  ${m.tier}
+                </span>
+              </td>
+              <td class="py-3 px-4 text-right space-x-2">
+                <button onclick="toggleMemberTier('${m.id}')" class="px-2 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded text-[11px] border border-slate-700" title="Switch between Core and Backup">
+                  <i class="fa-solid fa-arrows-rotate mr-1 text-brand-400"></i> ${isCore ? 'Move to Backup' : 'Promote to Core'}
+                </button>
+                <button onclick="deleteMember('${m.id}')" class="px-2 py-1 text-slate-500 hover:text-red-400 rounded transition" title="Remove member">
+                  <i class="fa-solid fa-trash"></i>
+                </button>
+              </td>
+            </tr>
+          `;
+        }).join('');
+      }
+    }
+
+    // 7. Dynamic Auth Bar
+    function renderAuthBar() {
+      const unlogged = document.getElementById('auth-unlogged');
+      const logged = document.getElementById('auth-logged');
+      const memberPortalBtn = document.getElementById('nav-member-portal');
+      const adminDashBtn = document.getElementById('nav-admin-dashboard');
+      const mobilePortalLinks = document.getElementById('mobile-portal-links');
+
+      if (currentUser) {
+        unlogged.classList.add('hidden');
+        logged.classList.remove('hidden');
+
+        document.getElementById('user-display-name').textContent = currentUser.name;
+        document.getElementById('user-role-badge').textContent = currentUser.role;
+        document.getElementById('user-avatar').src = currentUser.avatar || `https://placehold.co/100x100/6366f1/ffffff?text=${currentUser.name.charAt(0)}`;
+        
+        const portalUserName = document.getElementById('portal-user-name');
+        if (portalUserName) portalUserName.textContent = `${currentUser.name} (${currentUser.role})`;
+
+        // Show navigation items based on role
+        memberPortalBtn.classList.remove('hidden');
+        if (currentUser.role === 'admin') {
+          adminDashBtn.classList.remove('hidden');
+        } else {
+          adminDashBtn.classList.add('hidden');
+        }
+
+        // Mobile portal links
+        mobilePortalLinks.innerHTML = `
+          <button onclick="switchView('member-portal'); toggleMobileNav();" class="block w-full text-left py-2 px-3 rounded text-emerald-400 bg-emerald-950/40">Workspace Portal</button>
+          ${currentUser.role === 'admin' ? `<button onclick="switchView('admin-dashboard'); toggleMobileNav();" class="block w-full text-left py-2 px-3 rounded text-amber-400 bg-amber-950/40">Admin Hub</button>` : ''}
+        `;
+
+      } else {
+        unlogged.classList.remove('hidden');
+        logged.classList.add('hidden');
+        memberPortalBtn.classList.add('hidden');
+        adminDashBtn.classList.add('hidden');
+        mobilePortalLinks.innerHTML = '';
+      }
+    }
+
+    // ===============================================================
+    // AUTHENTICATION LOGIC (LOCAL WITH FIRESTORE READINESS)
+    // ===============================================================
+    function openLoginModal() {
+      document.getElementById('modal-login').classList.remove('hidden');
+      document.getElementById('login-error-msg').classList.add('hidden');
+    }
+
+    function closeLoginModal() {
+      document.getElementById('modal-login').classList.add('hidden');
+    }
+
+    function quickFillAuth(type) {
+      if (type === 'admin') {
+        document.getElementById('auth-email').value = "admin@nexus.io";
+        document.getElementById('auth-password').value = "admin123";
+      } else {
+        document.getElementById('auth-email').value = "kaviyan@nexus.io";
+        document.getElementById('auth-password').value = "hack123";
+      }
+    }
+
+    function handleLoginSubmit(e) {
+      e.preventDefault();
+      const email = document.getElementById('auth-email').value.trim();
+      const password = document.getElementById('auth-password').value;
+      const errBox = document.getElementById('login-error-msg');
+
+      // Admin verification
+      if (email === 'admin@nexus.io' && password === 'admin123') {
+        currentUser = {
+          id: 'admin-0',
+          name: 'Chief Admin (Lead)',
+          email: 'admin@nexus.io',
+          role: 'admin',
+          avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100'
+        };
+        saveStorage('session_user', currentUser);
+        closeLoginModal();
+        renderAll();
+        showToast("Welcome back, Lead Admin!", "success");
+        switchView('admin-dashboard');
+        return;
+      }
+
+      // Check against team roster members or approved candidates
+      const matchedMember = members.find(m => m.name.toLowerCase().includes(email.split('@')[0].toLowerCase()) || m.id === email);
+      if (matchedMember || password === 'hack123') {
+        currentUser = {
+          id: matchedMember ? matchedMember.id : 'usr-' + Date.now(),
+          name: matchedMember ? matchedMember.name : (email.split('@')[0] || 'Team Member'),
+          email: email,
+          role: 'member',
+          avatar: matchedMember ? matchedMember.avatar : null
+        };
+        saveStorage('session_user', currentUser);
+        closeLoginModal();
+        renderAll();
+        showToast(`Logged in as ${currentUser.name}`, "success");
+        switchView('member-portal');
+        return;
+      }
+
+      errBox.textContent = "Invalid credentials. Use Quick Login or default passwords (admin123 / hack123).";
+      errBox.classList.remove('hidden');
+    }
+
+    function logoutUser() {
+      currentUser = null;
+      localStorage.removeItem('nexus_session_user');
+      renderAll();
+      showToast("Logged out successfully", "info");
+      switchView('home');
+    }
+
+    // ===============================================================
+    // ACTIONS & INTERACTION LOGIC
+    // ===============================================================
+
+    // 1. Join Application Form Submission
+    function handleJoinSubmit(e) {
+      e.preventDefault();
+
+      const newApp = {
+        id: 'app-' + Date.now(),
+        name: document.getElementById('join-name').value.trim(),
+        email: document.getElementById('join-email').value.trim(),
+        dept: document.getElementById('join-dept').value.trim(),
+        year: document.getElementById('join-year').value,
+        targetRole: document.getElementById('join-role').value,
+        skills: document.getElementById('join-skills').value.trim(),
+        portfolio: document.getElementById('join-portfolio').value.trim(),
+        reason: document.getElementById('join-reason').value.trim(),
+        status: 'pending'
+      };
+
+      applications.unshift(newApp);
+      saveStorage('applications', applications);
+
+      document.getElementById('join-form').reset();
+      const successMsg = document.getElementById('join-success-msg');
+      successMsg.classList.remove('hidden');
+
+      setTimeout(() => {
+        successMsg.classList.add('hidden');
+      }, 7000);
+
+      renderAdminDashboard();
+      showToast("Application submitted for Admin review!", "success");
+    }
+
+    // 2. Application Approvals (Creates active member account)
+    function approveApplication(appId) {
+      const idx = applications.findIndex(a => a.id === appId);
+      if (idx === -1) return;
+
+      const app = applications[idx];
+      app.status = 'approved';
+
+      // Decide tier: if core is under 6, make core, otherwise backup
+      const coreCount = members.filter(m => m.tier === 'core').length;
+      const tier = coreCount < 6 ? 'core' : 'backup';
+
+      const newMember = {
+        id: 'mem-' + Date.now(),
+        name: app.name,
+        dept: app.dept,
+        role: app.targetRole,
+        tier: tier,
+        skills: app.skills.split(',').map(s => s.trim()),
+        github: app.portfolio,
+        linkedin: "https://linkedin.com",
+        avatar: `https://placehold.co/150x150/4f46e5/ffffff?text=${app.name.charAt(0)}`
+      };
+
+      members.push(newMember);
+      saveStorage('members', members);
+      saveStorage('applications', applications);
+
+      // Post an automatic announcement
+      announcements.unshift({
+        id: 'anno-' + Date.now(),
+        text: `👋 Welcome ${app.name} (${app.dept}) as our new ${app.targetRole} (${tier.toUpperCase()})!`,
+        link: ""
+      });
+      saveStorage('announcements', announcements);
+
+      renderAll();
+      showToast(`${app.name} approved and promoted to ${tier.toUpperCase()} team!`, "success");
+    }
+
+    function rejectApplication(appId) {
+      applications = applications.filter(a => a.id !== appId);
+      saveStorage('applications', applications);
+      renderAdminDashboard();
+      showToast("Application rejected and archived", "info");
+    }
+
+    // 3. Member Tier Swapping (Core <-> Backup)
+    function toggleMemberTier(memberId) {
+      const member = members.find(m => m.id === memberId);
+      if (!member) return;
+
+      const previousTier = member.tier;
+      member.tier = previousTier === 'core' ? 'backup' : 'core';
+      saveStorage('members', members);
+      renderAll();
+      showToast(`${member.name} moved from ${previousTier.toUpperCase()} to ${member.tier.toUpperCase()}`, "info");
+    }
+
+    function deleteMember(memberId) {
+      members = members.filter(m => m.id !== memberId);
+      saveStorage('members', members);
+      renderAll();
+      showToast("Member removed from roster", "info");
+    }
+
+    // 4. Chat Messages
+    function handleSendChat(e) {
+      e.preventDefault();
+      const input = document.getElementById('chat-input');
+      const text = input.value.trim();
+      if (!text) return;
+
+      const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      const newMsg = {
+        id: 'msg-' + Date.now(),
+        author: currentUser ? currentUser.name : 'Squad Guest',
+        role: currentUser ? currentUser.role : 'member',
+        text: text,
+        time: timeStr
+      };
+
+      chats.push(newMsg);
+      saveStorage('chats', chats);
+      input.value = '';
+      renderChat();
+    }
+
+    // 5. Sprint Tasks Management
+    function openAddTaskModal() {
+      document.getElementById('modal-task').classList.remove('hidden');
+    }
+
+    function closeTaskModal() {
+      document.getElementById('modal-task').classList.add('hidden');
+      document.getElementById('task-form').reset();
+    }
+
+    function handleSaveTask(e) {
+      e.preventDefault();
+      const newTask = {
+        id: 'task-' + Date.now(),
+        title: document.getElementById('task-title').value.trim(),
+        assignee: document.getElementById('task-assignee').value,
+        priority: document.getElementById('task-priority').value,
+        status: 'todo'
+      };
+
+      tasks.push(newTask);
+      saveStorage('tasks', tasks);
+      closeTaskModal();
+      renderTasks();
+      showToast("Task added to sprint board!", "success");
+    }
+
+    function moveTask(taskId, newStatus) {
+      const task = tasks.find(t => t.id === taskId);
+      if (task) {
+        task.status = newStatus;
+        saveStorage('tasks', tasks);
+        renderTasks();
+      }
+    }
+
+    function deleteTask(taskId) {
+      tasks = tasks.filter(t => t.id !== taskId);
+      saveStorage('tasks', tasks);
+      renderTasks();
+      showToast("Task removed", "info");
+    }
+
+    // 6. Project Management (CMS)
+    function openNewProjectModal() {
+      document.getElementById('proj-edit-id').value = '';
+      document.getElementById('project-form').reset();
+      document.getElementById('project-modal-title').textContent = "Add Hackathon Project";
+      document.getElementById('modal-project').classList.remove('hidden');
+    }
+
+    function closeProjectModal() {
+      document.getElementById('modal-project').classList.add('hidden');
+    }
+
+    function editProject(id) {
+      const p = projects.find(item => item.id === id);
+      if (!p) return;
+
+      document.getElementById('proj-edit-id').value = p.id;
+      document.getElementById('proj-title').value = p.title;
+      document.getElementById('proj-desc').value = p.desc;
+      document.getElementById('proj-tags').value = p.tags.join(', ');
+      document.getElementById('proj-github').value = p.github;
+      document.getElementById('proj-demo').value = p.demo;
+      document.getElementById('project-modal-title').textContent = "Edit Project";
+      document.getElementById('modal-project').classList.remove('hidden');
+    }
+
+    function handleSaveProject(e) {
+      e.preventDefault();
+      const editId = document.getElementById('proj-edit-id').value;
+      const title = document.getElementById('proj-title').value.trim();
+      const desc = document.getElementById('proj-desc').value.trim();
+      const tags = document.getElementById('proj-tags').value.split(',').map(t => t.trim());
+      const github = document.getElementById('proj-github').value.trim();
+      const demo = document.getElementById('proj-demo').value.trim();
+
+      if (editId) {
+        const p = projects.find(item => item.id === editId);
+        if (p) {
+          p.title = title;
+          p.desc = desc;
+          p.tags = tags;
+          p.github = github;
+          p.demo = demo;
+        }
+      } else {
+        projects.unshift({
+          id: 'proj-' + Date.now(),
+          title, desc, tags, github, demo
+        });
+      }
+
+      saveStorage('projects', projects);
+      closeProjectModal();
+      renderProjects();
+      showToast("Project catalog updated!", "success");
+    }
+
+    function deleteProject(id) {
+      projects = projects.filter(p => p.id !== id);
+      saveStorage('projects', projects);
+      renderProjects();
+      showToast("Project deleted", "info");
+    }
+
+    // 7. Announcements Management
+    function openAnnouncementModal() {
+      document.getElementById('announcement-form').reset();
+      document.getElementById('modal-announcement').classList.remove('hidden');
+    }
+
+    function closeAnnouncementModal() {
+      document.getElementById('modal-announcement').classList.add('hidden');
+    }
+
+    function handleSaveAnnouncement(e) {
+      e.preventDefault();
+      const text = document.getElementById('anno-content').value.trim();
+      const link = document.getElementById('anno-link').value.trim();
+
+      announcements.unshift({
+        id: 'anno-' + Date.now(),
+        text, link
+      });
+
+      saveStorage('announcements', announcements);
+      closeAnnouncementModal();
+      renderAnnouncements();
+      showToast("New announcement pushed to live ticker!", "success");
+    }
+
+    function deleteAnnouncement(id) {
+      announcements = announcements.filter(a => a.id !== id);
+      saveStorage('announcements', announcements);
+      renderAnnouncements();
+      showToast("Announcement removed", "info");
+    }
+
+    // 8. Custom Member Add Modal
+    function openAddMemberModal() {
+      document.getElementById('member-form').reset();
+      document.getElementById('modal-member').classList.remove('hidden');
+    }
+
+    function closeMemberModal() {
+      document.getElementById('modal-member').classList.add('hidden');
+    }
+
+    function handleSaveCustomMember(e) {
+      e.preventDefault();
+      const name = document.getElementById('new-mem-name').value.trim();
+      const dept = document.getElementById('new-mem-dept').value.trim();
+      const tier = document.getElementById('new-mem-tier').value;
+      const role = document.getElementById('new-mem-role').value.trim();
+      const skills = document.getElementById('new-mem-skills').value.split(',').map(s => s.trim());
+
+      members.push({
+        id: 'mem-' + Date.now(),
+        name, dept, role, tier, skills,
+        github: "https://github.com",
+        linkedin: "https://linkedin.com",
+        avatar: `https://placehold.co/150x150/6366f1/ffffff?text=${name.charAt(0)}`
+      });
+
+      saveStorage('members', members);
+      closeMemberModal();
+      renderAll();
+      showToast(`Added ${name} to squad roster!`, "success");
+    }
+
+    // ===============================================================
+    // HACKATHON COUNTDOWN TIMER
+    // ===============================================================
+    function initCountdown() {
+      // Countdown target: 7 days from now
+      const targetDate = new Date();
+      targetDate.setDate(targetDate.getDate() + 7);
+      targetDate.setHours(targetDate.getHours() + 14);
+
+      function updateClock() {
+        const now = new Date().getTime();
+        const difference = targetDate.getTime() - now;
+
+        if (difference < 0) return;
+
+        const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+        document.getElementById('timer-days').textContent = String(days).padStart(2, '0');
+        document.getElementById('timer-hours').textContent = String(hours).padStart(2, '0');
+        document.getElementById('timer-minutes').textContent = String(minutes).padStart(2, '0');
+        document.getElementById('timer-seconds').textContent = String(seconds).padStart(2, '0');
+      }
+
+      updateClock();
+      setInterval(updateClock, 1000);
+    }
+
+    // ===============================================================
+    // TOAST NOTIFICATIONS & SANITIZATION UTILS
+    // ===============================================================
+    function showToast(message, type = 'success') {
+      const toast = document.getElementById('toast');
+      const icon = document.getElementById('toast-icon');
+      const msg = document.getElementById('toast-msg');
+
+      msg.textContent = message;
+
+      if (type === 'success') {
+        icon.className = 'fa-solid fa-circle-check text-emerald-400';
+      } else if (type === 'error') {
+        icon.className = 'fa-solid fa-circle-xmark text-red-400';
+      } else if (type === 'warning') {
+        icon.className = 'fa-solid fa-triangle-exclamation text-amber-400';
+      } else {
+        icon.className = 'fa-solid fa-circle-info text-blue-400';
+      }
+
+      toast.classList.remove('translate-y-24', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+
+      setTimeout(() => {
+        toast.classList.add('translate-y-24', 'opacity-0');
+        toast.classList.remove('translate-y-0', 'opacity-100');
+      }, 3500);
+    }
+
+    function escapeHtml(string) {
+      if (!string) return '';
+      return String(string)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    // Window Load Initialization
+    window.onload = function() {
+      initCountdown();
+      renderAll();
+    };
+  </script>
+</body>
+</html>
