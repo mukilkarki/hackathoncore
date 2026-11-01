@@ -269,18 +269,6 @@ const supabaseClient = window.supabase?.createClient && SUPABASE_CONFIG.url && S
 
     async function initializeApp() {
       initCountdown();
-      const accountFields = document.getElementById('join-account-fields');
-      const joinPassword = document.getElementById('join-password');
-      const joinPasswordConfirm = document.getElementById('join-password-confirm');
-      const joinSubmitButton = document.getElementById('join-submit-button');
-      accountFields.classList.toggle('hidden', !supabaseClient);
-      [joinPassword, joinPasswordConfirm].forEach(input => {
-        input.required = Boolean(supabaseClient);
-        input.disabled = !supabaseClient;
-      });
-      document.getElementById('join-password-note').classList.toggle('hidden', !supabaseClient);
-      joinSubmitButton.textContent = supabaseClient ? "Create Account & Apply" : "Submit Application";
-
       if (!supabaseClient) {
         if (hasPartialSupabaseConfig) {
           setDatabaseStatus("Setup needed", "bg-red-400");
@@ -853,108 +841,6 @@ const supabaseClient = window.supabase?.createClient && SUPABASE_CONFIG.url && S
     // ===============================================================
     // ACTIONS & INTERACTION LOGIC
     // ===============================================================
-
-    // 1. Member Registration and Join Application
-    async function handleJoinSubmit(e) {
-      e.preventDefault();
-      const form = document.getElementById('join-form');
-      const errorBox = document.getElementById('join-error-msg');
-      const submitButton = document.getElementById('join-submit-button');
-      const password = document.getElementById('join-password').value;
-      const passwordConfirm = document.getElementById('join-password-confirm').value;
-
-      errorBox.textContent = '';
-      errorBox.classList.add('hidden');
-
-      if (supabaseClient && currentUser) {
-        errorBox.textContent = "Log out before creating a separate member account.";
-        errorBox.classList.remove('hidden');
-        return;
-      }
-
-      if (supabaseClient && password !== passwordConfirm) {
-        errorBox.textContent = "The passwords do not match.";
-        errorBox.classList.remove('hidden');
-        return;
-      }
-
-      const newApp = {
-        id: 'app-' + Date.now(),
-        name: document.getElementById('join-name').value.trim(),
-        email: document.getElementById('join-email').value.trim(),
-        dept: document.getElementById('join-dept').value.trim(),
-        year: document.getElementById('join-year').value,
-        targetRole: document.getElementById('join-role').value,
-        skills: document.getElementById('join-skills').value.trim(),
-        portfolio: document.getElementById('join-portfolio').value.trim(),
-        linkedin: document.getElementById('join-linkedin').value.trim(),
-        reason: document.getElementById('join-reason').value.trim(),
-        status: 'pending'
-      };
-
-      submitButton.disabled = true;
-      submitButton.textContent = "Submitting...";
-      let accountCreated = false;
-      try {
-        if (supabaseClient) {
-          const { data, error } = await supabaseClient.auth.signUp({
-            email: newApp.email,
-            password,
-            options: {
-              data: {
-                full_name: newApp.name,
-                department: newApp.dept,
-                title: newApp.targetRole,
-                skills: newApp.skills,
-                github: newApp.portfolio,
-                linkedin: newApp.linkedin,
-                avatar_url: ''
-              }
-            }
-          });
-          if (error) throw error;
-          accountCreated = true;
-
-          if (data.session) {
-            const { error: signOutError } = await supabaseClient.auth.signOut();
-            if (signOutError) throw signOutError;
-          }
-
-          const { error: applicationError } = await supabaseClient.rpc('submit_workspace_application', {
-            application_data: newApp
-          });
-          if (applicationError) throw applicationError;
-        } else {
-          applications.unshift(newApp);
-          saveStorage('applications', applications);
-        }
-
-        form.reset();
-        const successMsg = document.getElementById('join-success-msg');
-        document.getElementById('join-success-copy').textContent = supabaseClient
-          ? "Account created and application received. Confirm your email if requested; Workspace access is enabled only after admin approval."
-          : "Application received. The team will follow up about your application.";
-        successMsg.classList.remove('hidden');
-
-        setTimeout(() => {
-          successMsg.classList.add('hidden');
-        }, 7000);
-
-        renderAdminDashboard();
-        showToast(supabaseClient
-          ? "Account created. Confirm your email if requested; workspace access is pending admin approval."
-          : "Application saved in this browser only. Configure Supabase for shared access.", "success");
-      } catch (error) {
-        console.error("Unable to complete member registration:", error);
-        errorBox.textContent = accountCreated
-          ? `Your account was created, but the application could not be submitted: ${error.message || "Please try again."}`
-          : error.message || "Your account and application could not be submitted. Please try again.";
-        errorBox.classList.remove('hidden');
-      } finally {
-        submitButton.disabled = false;
-        submitButton.textContent = supabaseClient ? "Create Account & Apply" : "Submit Application";
-      }
-    }
 
     // 2. Application Approvals (Creates active member account)
     async function approveApplication(appId) {

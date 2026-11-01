@@ -34,7 +34,7 @@ NexusZero is a static frontend with Supabase Auth and Postgres. It supports one 
    python3 -m http.server 8000
    ```
 
-7. Open `http://localhost:8000/hackathon_team_portfolio_management_platform.html` and sign in with the invited administrator account.
+7. Open `http://localhost:8000/index.html` and sign in with the invited administrator account. The **Join Squad** links open the separate `join.html` registration page.
 
 ## Member registration, approval, and sign-in
 
