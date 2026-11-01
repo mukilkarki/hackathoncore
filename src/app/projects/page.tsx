@@ -1,2 +1,0 @@
-import { SectionTitle } from "@/components/section-title";
-export default function Projects(){return <main className="container py-20"><SectionTitle eyebrow="Build log" title="Projects" text="Solutions, experiments, and documentation from the team."/><div className="panel p-8"><h2 className="text-lg font-semibold">Project directory</h2><p className="mt-2 text-sm text-slate-400">The homepage currently contains clearly labeled sample concepts. Add verified project records and links in the secured dashboard after configuring Supabase.</p></div></main>}

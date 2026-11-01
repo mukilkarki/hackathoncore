@@ -1,2 +1,0 @@
-import { SectionTitle } from "@/components/section-title";
-export default function Contact(){return <main className="container py-20"><SectionTitle eyebrow="Say hello" title="Contact HACKATHON CORE" text="For collaborations, mentoring, or event invitations, use the official team channels once configured."/><div className="panel p-7"><p className="text-slate-300">Official email and social links are not published in this starter to avoid inventing contact details.</p></div></main>}
