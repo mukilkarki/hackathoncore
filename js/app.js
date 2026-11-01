@@ -129,6 +129,37 @@ const supabaseClient = window.supabase?.createClient && SUPABASE_CONFIG.url && S
       }
     ];
 
+    const INITIAL_HACKATHONS = [
+      {
+        id: "smart-india-hackathon",
+        title: "Smart India Hackathon",
+        description: "Explore national problem statements and build practical solutions for real-world challenges.",
+        icon: "fa-landmark",
+        color: "brand"
+      },
+      {
+        id: "global-competitions",
+        title: "Global competitions",
+        description: "Take on open innovation challenges and collaborate across disciplines to deliver working prototypes.",
+        icon: "fa-earth-americas",
+        color: "cyan"
+      },
+      {
+        id: "36-hour-sprint",
+        title: "36-hour sprint format",
+        description: "Turn a team plan into a tested proof of concept, then communicate its value in a focused pitch.",
+        icon: "fa-stopwatch",
+        color: "emerald"
+      }
+    ];
+
+    const INITIAL_TEAM_RULES = [
+      { id: "rule-communication", title: "Communicate clearly", description: "Share progress, blockers, and decisions with the team early and respectfully." },
+      { id: "rule-own-your-work", title: "Own your work", description: "Keep tasks updated, meet agreed deadlines, and ask for help when plans change." },
+      { id: "rule-secure-by-default", title: "Protect team access", description: "Never share passwords, API keys, or private credentials in chat, code, or public demos." },
+      { id: "rule-respect-the-team", title: "Respect every teammate", description: "Listen to different perspectives and give useful, constructive feedback." }
+    ];
+
     const INITIAL_TASKS = [
       { id: "task-1", title: "Train and quantize YOLOv8n to ONNX format", assignee: "Sneha Murugan", priority: "High", status: "todo" },
       { id: "task-2", title: "Build responsive Pitch Presentation slides (10-slide deck)", assignee: "Harish V", priority: "Medium", status: "todo" },
@@ -197,6 +228,8 @@ const supabaseClient = window.supabase?.createClient && SUPABASE_CONFIG.url && S
     let tasks = loadStorage('tasks', INITIAL_TASKS);
     let applications = loadStorage('applications', INITIAL_APPLICATIONS);
     let chats = loadStorage('chats', INITIAL_CHATS);
+    let teamRules = loadStorage('team_rules', INITIAL_TEAM_RULES);
+    let hackathonSchedule = loadStorage('hackathon_schedule', []);
     let announcements = loadStorage('announcements', [
       { id: "anno-1", text: "🎉 Shortlisted for National Hackathon Finals 2026! Pre-sprint setup in progress.", link: "" }
     ]);
@@ -242,7 +275,7 @@ const supabaseClient = window.supabase?.createClient && SUPABASE_CONFIG.url && S
     async function loadWorkspaceData() {
       if (!supabaseClient) return;
 
-      const collections = ['members', 'projects', 'announcements'];
+      const collections = ['members', 'projects', 'announcements', 'team_rules', 'hackathon_schedule'];
       if (currentUser) collections.push('tasks', 'chats');
       if (currentUser?.role === 'admin') collections.push('applications');
 
@@ -252,7 +285,9 @@ const supabaseClient = window.supabase?.createClient && SUPABASE_CONFIG.url && S
         tasks: value => tasks = value,
         applications: value => applications = value,
         chats: value => chats = value,
-        announcements: value => announcements = value
+        announcements: value => announcements = value,
+        team_rules: value => teamRules = value,
+        hackathon_schedule: value => hackathonSchedule = value
       };
 
       const results = await Promise.all(collections.map(collection =>
@@ -293,6 +328,8 @@ const supabaseClient = window.supabase?.createClient && SUPABASE_CONFIG.url && S
       applications = [];
       chats = [];
       announcements = [];
+      teamRules = INITIAL_TEAM_RULES;
+      hackathonSchedule = [];
       try {
         const { data, error } = await supabaseClient.auth.getSession();
         if (error) throw error;
@@ -370,6 +407,10 @@ const supabaseClient = window.supabase?.createClient && SUPABASE_CONFIG.url && S
       renderAnnouncements();
       renderTeamMembers();
       renderProjects();
+      renderHackathons();
+      renderTeamRules();
+      renderHackathonScheduleAdmin();
+      renderCountdown();
       renderAuthBar();
       renderTasks();
       renderChat();
@@ -395,6 +436,151 @@ const supabaseClient = window.supabase?.createClient && SUPABASE_CONFIG.url && S
             </button>
           </div>
         `).join('') || '<p class="text-xs text-slate-500">No active announcements.</p>';
+      }
+    }
+
+    function renderHackathons() {
+      const catalog = document.getElementById('hackathon-catalog');
+      if (!catalog) return;
+
+      const colorClasses = {
+        brand: 'bg-brand-600/20 border-brand-500/30 text-brand-300',
+        cyan: 'bg-cyan-600/20 border-cyan-500/30 text-cyan-300',
+        emerald: 'bg-emerald-600/20 border-emerald-500/30 text-emerald-300'
+      };
+
+      catalog.innerHTML = INITIAL_HACKATHONS.map(hackathon => `
+        <article id="hackathon-${hackathon.id}" class="bg-slate-900 border border-slate-800 rounded-2xl p-6 scroll-mt-24">
+          <div class="w-10 h-10 rounded-xl ${colorClasses[hackathon.color]} border flex items-center justify-center mb-4">
+            <i class="fa-solid ${hackathon.icon}"></i>
+          </div>
+          <h3 class="font-bold text-white">${escapeHtml(hackathon.title)}</h3>
+          <p class="mt-2 text-sm text-slate-400">${escapeHtml(hackathon.description)}</p>
+        </article>
+      `).join('');
+    }
+
+    function renderTeamRules() {
+      const publicList = document.getElementById('team-rules-list');
+      if (publicList) {
+        publicList.innerHTML = teamRules.map(rule => `
+          <article class="bg-slate-900 border border-slate-800 rounded-2xl p-5 flex gap-4">
+            <span class="w-9 h-9 shrink-0 rounded-xl bg-emerald-600/15 border border-emerald-500/20 text-emerald-300 flex items-center justify-center">
+              <i class="fa-solid fa-check"></i>
+            </span>
+            <div>
+              <h3 class="font-semibold text-white">${escapeHtml(rule.title)}</h3>
+              <p class="mt-1 text-sm leading-relaxed text-slate-400">${escapeHtml(rule.description)}</p>
+            </div>
+          </article>
+        `).join('') || '<p class="md:col-span-2 text-center text-sm text-slate-500">Team rules have not been added yet.</p>';
+      }
+
+      const adminList = document.getElementById('admin-team-rules-list');
+      if (adminList) {
+        adminList.innerHTML = teamRules.map(rule => `
+          <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 flex items-start justify-between gap-3 text-xs">
+            <div class="min-w-0">
+              <p class="font-bold text-white">${escapeHtml(rule.title)}</p>
+              <p class="mt-1 text-slate-400">${escapeHtml(rule.description)}</p>
+            </div>
+            <div class="flex shrink-0 items-center gap-2">
+              <button onclick="editTeamRule(this.dataset.ruleId)" data-rule-id="${escapeHtml(rule.id)}" class="text-emerald-400 hover:text-emerald-300" aria-label="Edit ${escapeHtml(rule.title)}">
+                <i class="fa-solid fa-pen-to-square"></i>
+              </button>
+              <button onclick="deleteTeamRule(this.dataset.ruleId)" data-rule-id="${escapeHtml(rule.id)}" class="text-slate-400 hover:text-red-400" aria-label="Delete ${escapeHtml(rule.title)}">
+                <i class="fa-solid fa-trash"></i>
+              </button>
+            </div>
+          </div>
+        `).join('') || '<p class="text-xs text-slate-500">No team rules added yet.</p>';
+      }
+    }
+
+    function getScheduledHackathon() {
+      const schedule = Array.isArray(hackathonSchedule) ? hackathonSchedule[0] : null;
+      if (!schedule) return null;
+
+      const hackathon = INITIAL_HACKATHONS.find(item => item.id === schedule.hackathonId);
+      const startAt = new Date(schedule.startAt);
+      if (!hackathon || !schedule.startAt || Number.isNaN(startAt.getTime())) return null;
+
+      return { hackathon, startAt };
+    }
+
+    function formatHackathonDate(date) {
+      return new Intl.DateTimeFormat(undefined, {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit'
+      }).format(date);
+    }
+
+    function renderCountdown() {
+      const status = document.getElementById('countdown-status');
+      const eventPanel = document.getElementById('countdown-event');
+      const title = document.getElementById('countdown-event-title');
+      const date = document.getElementById('countdown-event-date');
+      const details = document.getElementById('countdown-event-details');
+      const scheduled = getScheduledHackathon();
+
+      if (!scheduled) {
+        const hasSavedSchedule = Array.isArray(hackathonSchedule) && hackathonSchedule.length > 0;
+        status.textContent = hasSavedSchedule ? 'The saved schedule is unavailable. Please contact an administrator.' : 'No hackathon has been scheduled yet.';
+        eventPanel.classList.add('hidden');
+        ['days', 'hours', 'minutes', 'seconds'].forEach(unit => {
+          document.getElementById(`timer-${unit}`).textContent = '00';
+        });
+        return;
+      }
+
+      const difference = scheduled.startAt.getTime() - Date.now();
+      status.textContent = difference > 0 ? 'Countdown to the scheduled start' : 'The hackathon has started';
+      title.textContent = scheduled.hackathon.title;
+      date.textContent = formatHackathonDate(scheduled.startAt);
+      details.href = `#hackathon-${scheduled.hackathon.id}`;
+      details.setAttribute('aria-label', `View details for ${scheduled.hackathon.title}`);
+      eventPanel.classList.remove('hidden');
+
+      const remaining = Math.max(0, difference);
+      const values = {
+        days: Math.floor(remaining / 86400000),
+        hours: Math.floor((remaining % 86400000) / 3600000),
+        minutes: Math.floor((remaining % 3600000) / 60000),
+        seconds: Math.floor((remaining % 60000) / 1000)
+      };
+      Object.entries(values).forEach(([unit, value]) => {
+        document.getElementById(`timer-${unit}`).textContent = String(value).padStart(2, '0');
+      });
+    }
+
+    function renderHackathonScheduleAdmin() {
+      const select = document.getElementById('schedule-hackathon');
+      if (!select) return;
+
+      const scheduled = getScheduledHackathon();
+      const startInput = document.getElementById('schedule-start-at');
+      select.innerHTML = INITIAL_HACKATHONS.map(hackathon => `
+        <option value="${hackathon.id}">${escapeHtml(hackathon.title)}</option>
+      `).join('');
+
+      if (scheduled) {
+        select.value = scheduled.hackathon.id;
+        if (document.activeElement !== startInput) {
+          const localStart = new Date(scheduled.startAt.getTime() - scheduled.startAt.getTimezoneOffset() * 60000);
+          startInput.value = localStart.toISOString().slice(0, 16);
+        }
+        document.getElementById('admin-schedule-status').textContent =
+          `${scheduled.hackathon.title} — ${formatHackathonDate(scheduled.startAt)}`;
+      } else {
+        if (document.activeElement !== startInput) startInput.value = '';
+        document.getElementById('admin-schedule-status').textContent =
+          Array.isArray(hackathonSchedule) && hackathonSchedule.length
+            ? 'Saved schedule is invalid; set a new date and hackathon.'
+            : 'No upcoming hackathon scheduled.';
       }
     }
 
@@ -1089,6 +1275,100 @@ const supabaseClient = window.supabase?.createClient && SUPABASE_CONFIG.url && S
       showToast("Announcement removed", "info");
     }
 
+    function requireAdminAction() {
+      if (currentUser?.role === 'admin') return true;
+      showToast("Only administrators can manage hackathon settings and team rules.", "error");
+      return false;
+    }
+
+    function handleStartHackathonCountdown(event) {
+      event.preventDefault();
+      if (!requireAdminAction()) return;
+
+      const hackathonId = document.getElementById('schedule-hackathon').value;
+      const startAtValue = document.getElementById('schedule-start-at').value;
+      const hackathon = INITIAL_HACKATHONS.find(item => item.id === hackathonId);
+      const startAt = new Date(startAtValue);
+      if (!hackathon || !startAtValue || Number.isNaN(startAt.getTime())) {
+        showToast("Choose a hackathon and a valid start date and time.", "error");
+        return;
+      }
+
+      hackathonSchedule = [{ hackathonId, startAt: startAt.toISOString() }];
+      saveStorage('hackathon_schedule', hackathonSchedule);
+      renderAll();
+      showToast("Hackathon countdown started.", "success");
+    }
+
+    function clearHackathonSchedule() {
+      if (!requireAdminAction()) return;
+      hackathonSchedule = [];
+      saveStorage('hackathon_schedule', hackathonSchedule);
+      renderAll();
+      showToast("Hackathon schedule cleared.", "info");
+    }
+
+    function openTeamRuleModal() {
+      if (!requireAdminAction()) return;
+      document.getElementById('team-rule-form').reset();
+      document.getElementById('team-rule-edit-id').value = '';
+      document.getElementById('team-rule-modal-title').textContent = 'Add Team Rule';
+      document.getElementById('modal-team-rule').classList.remove('hidden');
+    }
+
+    function closeTeamRuleModal() {
+      document.getElementById('modal-team-rule').classList.add('hidden');
+    }
+
+    function editTeamRule(id) {
+      if (!requireAdminAction()) return;
+      const rule = teamRules.find(item => item.id === id);
+      if (!rule) return;
+
+      document.getElementById('team-rule-edit-id').value = rule.id;
+      document.getElementById('team-rule-title').value = rule.title;
+      document.getElementById('team-rule-description').value = rule.description;
+      document.getElementById('team-rule-modal-title').textContent = 'Edit Team Rule';
+      document.getElementById('modal-team-rule').classList.remove('hidden');
+    }
+
+    function handleSaveTeamRule(event) {
+      event.preventDefault();
+      if (!requireAdminAction()) return;
+
+      const editId = document.getElementById('team-rule-edit-id').value;
+      const title = document.getElementById('team-rule-title').value.trim();
+      const description = document.getElementById('team-rule-description').value.trim();
+      if (!title || !description) {
+        showToast("Enter a title and description for the team rule.", "error");
+        return;
+      }
+
+      if (editId) {
+        const rule = teamRules.find(item => item.id === editId);
+        if (!rule) {
+          showToast("That team rule could not be found.", "error");
+          return;
+        }
+        teamRules = teamRules.map(item => item.id === editId ? { ...item, title, description } : item);
+      } else {
+        teamRules.unshift({ id: `rule-${Date.now()}`, title, description });
+      }
+
+      saveStorage('team_rules', teamRules);
+      closeTeamRuleModal();
+      renderAll();
+      showToast(editId ? "Team rule updated." : "Team rule added.", "success");
+    }
+
+    function deleteTeamRule(id) {
+      if (!requireAdminAction()) return;
+      teamRules = teamRules.filter(rule => rule.id !== id);
+      saveStorage('team_rules', teamRules);
+      renderAll();
+      showToast("Team rule deleted.", "info");
+    }
+
     // 8. Custom Member Add Modal
     function openAddMemberModal() {
       document.getElementById('member-form').reset();
@@ -1125,30 +1405,8 @@ const supabaseClient = window.supabase?.createClient && SUPABASE_CONFIG.url && S
     // HACKATHON COUNTDOWN TIMER
     // ===============================================================
     function initCountdown() {
-      // Countdown target: 7 days from now
-      const targetDate = new Date();
-      targetDate.setDate(targetDate.getDate() + 7);
-      targetDate.setHours(targetDate.getHours() + 14);
-
-      function updateClock() {
-        const now = new Date().getTime();
-        const difference = targetDate.getTime() - now;
-
-        if (difference < 0) return;
-
-        const days = Math.floor(difference / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((difference % (1000 * 60)) / 1000);
-
-        document.getElementById('timer-days').textContent = String(days).padStart(2, '0');
-        document.getElementById('timer-hours').textContent = String(hours).padStart(2, '0');
-        document.getElementById('timer-minutes').textContent = String(minutes).padStart(2, '0');
-        document.getElementById('timer-seconds').textContent = String(seconds).padStart(2, '0');
-      }
-
-      updateClock();
-      setInterval(updateClock, 1000);
+      renderCountdown();
+      setInterval(renderCountdown, 1000);
     }
 
     // ===============================================================

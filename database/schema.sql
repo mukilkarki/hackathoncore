@@ -12,6 +12,23 @@ create table if not exists public.workspace_data (
   updated_at timestamptz not null default now()
 );
 
+alter table public.workspace_data
+  drop constraint if exists workspace_data_collection_check;
+alter table public.workspace_data
+  drop constraint if exists workspace_data_collection_allowed;
+alter table public.workspace_data
+  add constraint workspace_data_collection_allowed
+  check (collection in (
+    'members',
+    'projects',
+    'tasks',
+    'applications',
+    'chats',
+    'announcements',
+    'team_rules',
+    'hackathon_schedule'
+  ));
+
 alter table public.workspace_roles enable row level security;
 alter table public.workspace_data enable row level security;
 
@@ -58,7 +75,7 @@ drop policy if exists workspace_data_read_public on public.workspace_data;
 create policy workspace_data_read_public
   on public.workspace_data for select
   to anon, authenticated
-  using (collection in ('members', 'projects', 'announcements'));
+  using (collection in ('members', 'projects', 'announcements', 'team_rules', 'hackathon_schedule'));
 
 drop policy if exists workspace_data_read_team on public.workspace_data;
 create policy workspace_data_read_team

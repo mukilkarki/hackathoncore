@@ -1,6 +1,6 @@
 # NexusZero setup
 
-NexusZero is a static frontend with Supabase Auth and Postgres. It supports one team workspace; team, project, task, application, chat, and announcement collections are stored as JSON arrays in the `workspace_data` table.
+NexusZero is a static frontend with Supabase Auth and Postgres. It supports one team workspace; team, project, task, application, chat, announcement, team-rule, and hackathon-schedule collections are stored as JSON arrays in the `workspace_data` table.
 
 ## Run locally
 
@@ -42,7 +42,7 @@ Applicants use **Join Squad** to create a Supabase Auth account and submit their
 
 An administrator reviews the application in **Admin Hub** and selects **Accept**. The database approval function checks that the applicant has a confirmed Auth account with the same email, marks the application approved, and grants the `member` role. Both steps happen atomically; an unregistered or unconfirmed applicant cannot be approved yet. Once approved, the member signs in from **Login** with the email and password they created through Join Squad.
 
-In **My Profile** in the Workspace, each signed-in user can edit their name, department, team title, skills, GitHub and LinkedIn links, and avatar URL. These fields are saved to that user's Supabase Auth metadata; changing a profile does not change their workspace role or administrator permissions.
+In **My Profile** in the Workspace, each signed-in user can edit their name, department, team title, skills, GitHub and LinkedIn links, and avatar URL. These fields are saved to that user's Supabase Auth metadata; changing a profile does not change their workspace role or administrator permissions. In **Admin Hub**, administrators can choose a hackathon from the public catalog, set its start date and time to start the public countdown, and add, edit, or remove the team rules shown on the home page.
 
 Applications are stored in the private `applications` collection. The registration password is sent only to Supabase Auth and is never included in the application record. If email confirmation is enabled, configure the Supabase Auth site URL and allowed redirect URLs for your deployment.
 
