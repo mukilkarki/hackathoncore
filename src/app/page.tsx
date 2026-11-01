@@ -1,0 +1,21 @@
+import Link from "next/link";
+import { SectionTitle } from "@/components/section-title";
+const stats = [["06","Team members"],["04","Core disciplines"],["∞","Ideas to build"]];
+const sampleProjects = [{name:"VeriAICTE",tag:"AI · Compliance",desc:"Decision support for institutional application validation."},{name:"Mentalist Evolution",tag:"PWA · Productivity",desc:"A habit and growth system built around daily quests."},{name:"C Turbo",tag:"Developer tools",desc:"A browser-based coding workspace concept."}];
+export default function Home() {
+  return <main>
+    <section className="relative overflow-hidden"><div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_20%_10%,rgba(124,58,237,.24),transparent_45%),radial-gradient(ellipse_at_90%_30%,rgba(37,99,235,.2),transparent_38%)]" />
+      <div className="container relative grid min-h-[620px] items-center gap-12 py-20 md:grid-cols-[1.1fr_.9fr]">
+        <div><div className="mb-6 inline-flex items-center gap-2 rounded-full border border-violet-300/20 bg-violet-300/5 px-4 py-2 text-xs text-violet-200"><span className="h-2 w-2 rounded-full bg-emerald-400"/> Multidisciplinary student team</div>
+          <h1 className="max-w-3xl text-5xl font-black leading-[1.02] tracking-tight md:text-7xl">Think beyond.<br/><span className="gradient-text">Build what matters.</span></h1>
+          <p className="mt-6 max-w-xl text-lg leading-8 text-slate-300">Think. Build. Innovate. Compete. Six students bringing different disciplines together to solve real-world problems—one hackathon at a time.</p>
+          <div className="mt-8 flex flex-wrap gap-3"><Link href="/projects" className="rounded-full bg-white px-6 py-3 font-semibold text-slate-950">Explore our work ↗</Link><Link href="/recruitment" className="rounded-full border border-white/15 px-6 py-3 font-semibold hover:bg-white/5">Join the team</Link></div>
+        </div>
+        <div className="panel glow relative p-6 md:p-8"><div className="absolute -right-4 -top-4 h-24 w-24 rounded-full bg-blue-500/20 blur-3xl"/><p className="text-xs uppercase tracking-[.2em] text-slate-400">Our operating system</p><div className="mt-5 space-y-3">{["Discover a meaningful problem","Design across disciplines","Build. Test. Iterate.","Compete, learn, repeat."].map((x,i)=><div key={x} className="flex items-center gap-4 rounded-xl border border-white/10 bg-white/[.03] p-4"><span className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-violet-500/30 to-blue-500/30 text-sm font-bold text-violet-200">0{i+1}</span><span className="text-sm font-medium">{x}</span></div>)}</div><p className="mt-5 text-xs text-slate-500">SIX MEMBERS · ONE VISION · ENDLESS POSSIBILITIES</p></div>
+      </div>
+    </section>
+    <section className="container py-16"><div className="grid gap-4 sm:grid-cols-3">{stats.map(([n,l])=><div key={l} className="panel p-6"><p className="gradient-text text-4xl font-black">{n}</p><p className="mt-2 text-sm text-slate-400">{l}</p></div>)}</div></section>
+    <section className="container py-16"><SectionTitle eyebrow="Selected work · sample showcase" title="Ideas in motion" text="A few project concepts from our build queue. Replace these clearly marked examples with verified team projects."/><div className="grid gap-4 md:grid-cols-3">{sampleProjects.map((p)=><article key={p.name} className="panel p-6 transition hover:-translate-y-1 hover:border-violet-300/30"><p className="text-xs font-semibold text-blue-300">{p.tag}</p><h3 className="mt-4 text-xl font-bold">{p.name}</h3><p className="mt-3 min-h-14 text-sm leading-6 text-slate-400">{p.desc}</p><p className="mt-5 text-xs text-amber-300">Sample concept · not a live integration</p></article>)}</div></section>
+    <section className="container py-16"><div className="panel flex flex-col items-start justify-between gap-6 p-8 md:flex-row md:items-center md:p-12"><div><p className="text-xs font-bold uppercase tracking-[.2em] text-violet-300">Build with us</p><h2 className="mt-3 text-3xl font-bold">Different disciplines.<br/>One ambitious team.</h2><p className="mt-3 text-slate-400">Bring your curiosity, skills, and willingness to learn.</p></div><Link href="/recruitment" className="rounded-full bg-gradient-to-r from-violet-600 to-blue-600 px-6 py-3 font-semibold">Apply to join ↗</Link></div></section>
+  </main>;
+}
