@@ -676,8 +676,13 @@ const supabaseClient = window.supabase?.createClient && SUPABASE_CONFIG.url && S
       const memberPortalBtn = document.getElementById('nav-member-portal');
       const adminDashBtn = document.getElementById('nav-admin-dashboard');
       const mobilePortalLinks = document.getElementById('mobile-portal-links');
+      const joinUsLinks = [
+        document.getElementById('nav-join-us'),
+        document.getElementById('mobile-nav-join-us')
+      ];
 
       if (currentUser) {
+        joinUsLinks.forEach(link => link.classList.add('hidden'));
         unlogged.classList.add('hidden');
         logged.classList.remove('hidden');
 
@@ -705,6 +710,7 @@ const supabaseClient = window.supabase?.createClient && SUPABASE_CONFIG.url && S
         `;
 
       } else {
+        joinUsLinks.forEach(link => link.classList.remove('hidden'));
         unlogged.classList.remove('hidden');
         logged.classList.add('hidden');
         memberPortalBtn.classList.add('hidden');
